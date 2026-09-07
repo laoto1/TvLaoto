@@ -280,26 +280,43 @@ class PlayerViewModel(
         
         hideEpgPanel()
         _currentCatchupProgram.value = program
+        _isBuffering.value = true
 
-        // Use server-resolved catchup URL directly
-        val catchupUrl = program.catchupUrl
-        if (catchupUrl != null) {
-            _isBuffering.value = true
-            com.tvlaoto.util.AppLogger.i("Player", "Playing catchup: ${program.title} url=${catchupUrl.take(60)}...")
-            try {
-                val mediaSource = TvPlayerFactory.createMediaSource(channel.copy(streamUrl = catchupUrl))
-                player.setMediaSource(mediaSource)
-                player.prepare()
-                player.playWhenReady = true
-            } catch (e: Exception) {
-                com.tvlaoto.util.AppLogger.e("Player", "Catchup play error", e)
-                _errorMessage.value = e.localizedMessage ?: "Lỗi phát luồng xem lại"
-                _isBuffering.value = false
+        viewModelScope.launch {
+            // Extract VTVGo channel ID from stream URL
+            val channelId = Regex("(?:-(\\d+)\\.html|,(\\d+)\\.html)").find(channel.streamUrl)?.let {
+                it.groupValues[1].ifEmpty { it.groupValues[2] }
             }
-        } else {
-            _errorMessage.value = "Chương trình này hiện không có link xem lại."
-            _isBuffering.value = false
-            _currentCatchupProgram.value = null
+
+            if (channelId == null || program.slotId == null) {
+                _errorMessage.value = "Chương trình này không hỗ trợ xem lại."
+                _isBuffering.value = false
+                _currentCatchupProgram.value = null
+                return@launch
+            }
+
+            com.tvlaoto.util.AppLogger.i("Player", "Fetching catchup: ${program.title}")
+
+            // Fetch catchup URL on-demand from VTVGo API
+            val catchupUrl = repository.fetchCatchupUrl(channelId, program)
+
+            if (catchupUrl != null) {
+                com.tvlaoto.util.AppLogger.i("Player", "Playing catchup: ${catchupUrl.take(80)}...")
+                try {
+                    val mediaSource = TvPlayerFactory.createMediaSource(channel.copy(streamUrl = catchupUrl))
+                    player.setMediaSource(mediaSource)
+                    player.prepare()
+                    player.playWhenReady = true
+                } catch (e: Exception) {
+                    com.tvlaoto.util.AppLogger.e("Player", "Catchup play error", e)
+                    _errorMessage.value = e.localizedMessage ?: "Lỗi phát luồng xem lại"
+                    _isBuffering.value = false
+                }
+            } else {
+                _errorMessage.value = "Không thể tải link xem lại."
+                _isBuffering.value = false
+                _currentCatchupProgram.value = null
+            }
         }
     }
 
