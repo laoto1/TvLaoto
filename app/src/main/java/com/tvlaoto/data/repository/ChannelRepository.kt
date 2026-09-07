@@ -309,6 +309,95 @@ class ChannelRepository(
 
         serverEpgCache[channelName] ?: emptyList()
     }
+
+    /**
+     * Fallback: fetch EPG directly from VTVGo API when server EPG is empty.
+     * Extracts channel ID from the stream URL (e.g., vtv1-1.html -> 1)
+     */
+    suspend fun fetchEpgFromApi(streamUrl: String): List<com.tvlaoto.data.model.EpgProgram> = withContext(Dispatchers.IO) {
+        val list = mutableListOf<com.tvlaoto.data.model.EpgProgram>()
+        try {
+            val channelIdMatch = Regex("(\\d+)\\.html").find(streamUrl)
+            val channelId = channelIdMatch?.groupValues?.get(1) ?: return@withContext emptyList()
+
+            val sdf = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", java.util.Locale.US)
+            sdf.timeZone = java.util.TimeZone.getTimeZone("UTC")
+
+            val startCal = java.util.Calendar.getInstance().apply {
+                set(java.util.Calendar.HOUR_OF_DAY, 0)
+                set(java.util.Calendar.MINUTE, 0)
+                set(java.util.Calendar.SECOND, 0)
+            }
+            val endCal = java.util.Calendar.getInstance().apply {
+                add(java.util.Calendar.DAY_OF_YEAR, 1)
+                set(java.util.Calendar.HOUR_OF_DAY, 0)
+                set(java.util.Calendar.MINUTE, 0)
+                set(java.util.Calendar.SECOND, 0)
+            }
+
+            val startIso = sdf.format(startCal.time)
+            val endIso = sdf.format(endCal.time)
+
+            val apiUrl = "https://cache-api-vtvgo.vtvdigital.vn/cdn/live-channel/api/v1/channels/$channelId/programs" +
+                "?startIsoDate=${java.net.URLEncoder.encode(startIso, "UTF-8")}" +
+                "&endIsoDate=${java.net.URLEncoder.encode(endIso, "UTF-8")}"
+
+            val request = Request.Builder()
+                .url(apiUrl)
+                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
+                .build()
+
+            val response = httpClient.newCall(request).execute()
+            if (response.isSuccessful) {
+                val body = response.body?.string() ?: return@withContext emptyList()
+                val jsonObj = org.json.JSONObject(body)
+                val dataArr = jsonObj.optJSONArray("data") ?: return@withContext emptyList()
+
+                com.tvlaoto.util.AppLogger.d("ChannelRepo", "EPG API: ${dataArr.length()} programs for channel $channelId")
+
+                for (i in 0 until dataArr.length()) {
+                    val item = dataArr.getJSONObject(i)
+                    var title = item.optString("title", "").trim()
+                    title = title.replace(Regex("^Phim truyện:\\s*"), "")
+
+                    val startDateStr = item.optString("startDate")
+                    var timeStr = ""
+                    var startEpochMs = 0L
+                    var endEpochMs = 0L
+
+                    if (startDateStr.isNotEmpty()) {
+                        try {
+                            val date = sdf.parse(startDateStr)
+                            val localSdf = java.text.SimpleDateFormat("HH:mm", java.util.Locale.US)
+                            localSdf.timeZone = java.util.TimeZone.getDefault()
+                            timeStr = date?.let { localSdf.format(it) } ?: ""
+                            startEpochMs = date?.time?.div(1000) ?: 0L
+                        } catch (_: Exception) {}
+                    }
+                    val endDateStr = item.optString("endDate")
+                    if (endDateStr.isNotEmpty()) {
+                        try {
+                            endEpochMs = sdf.parse(endDateStr)?.time?.div(1000) ?: 0L
+                        } catch (_: Exception) {}
+                    }
+
+                    list.add(
+                        com.tvlaoto.data.model.EpgProgram(
+                            index = i,
+                            time = timeStr,
+                            title = title,
+                            isReplayable = item.optInt("isPlayable", 1) == 1,
+                            startEpoch = startEpochMs,
+                            endEpoch = endEpochMs
+                        )
+                    )
+                }
+            }
+        } catch (e: Exception) {
+            com.tvlaoto.util.AppLogger.w("ChannelRepo", "EPG API error: ${e.message}")
+        }
+        list
+    }
 }
 
 

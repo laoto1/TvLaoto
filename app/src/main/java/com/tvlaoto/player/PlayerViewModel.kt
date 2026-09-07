@@ -260,7 +260,12 @@ class PlayerViewModel(
         
         viewModelScope.launch {
             _isEpgLoading.value = true
-            val list = repository.fetchServerEpg(channel.name)
+            // Try server EPG first, fallback to direct API
+            var list = repository.fetchServerEpg(channel.name)
+            if (list.isEmpty()) {
+                com.tvlaoto.util.AppLogger.d("Player", "Server EPG empty, trying VTVGo API...")
+                list = repository.fetchEpgFromApi(channel.streamUrl)
+            }
             if (list.isNotEmpty()) {
                 epgCache[channel.id] = list
             }
