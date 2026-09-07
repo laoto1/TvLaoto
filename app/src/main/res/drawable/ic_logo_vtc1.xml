@@ -1,0 +1,21 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="64dp"
+    android:height="32dp"
+    android:viewportWidth="64"
+    android:viewportHeight="32">
+    <!-- VTC Blue Badge -->
+    <path
+        android:fillColor="#0288D1"
+        android:pathData="M6,6h30v20h-30z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M9,9h4l2,8l2-8h4l-4,14h-4z M21,9h9v3h-3v11h-3v-11h-3z" />
+    <!-- Number 1 (Cyan) -->
+    <path
+        android:fillColor="#00E5FF"
+        android:pathData="M42,6h16v20h-16z" />
+    <path
+        android:fillColor="#0A0A0F"
+        android:pathData="M48,9h4v14h-3v-11l-2,2v-3z" />
+</vector>
+

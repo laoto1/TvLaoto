@@ -1,0 +1,22 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Radio SVG outline -->
+    <path
+        android:strokeColor="#B8BDD3"
+        android:strokeWidth="1.8"
+        android:pathData="M5,6 L15,2" />
+    <path
+        android:strokeColor="#B8BDD3"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:pathData="M3,6 H21 C21.6,6 22,6.4 22,7 V19 C22,19.6 21.6,20 21,20 H3 C2.4,20 2,19.6 2,19 V7 C2,6.4 2.4,6 3,6 Z" />
+    <!-- Speaker & tuning lines -->
+    <path
+        android:strokeColor="#B8BDD3"
+        android:strokeWidth="1.8"
+        android:pathData="M8,13 A3,3 0 1,0 8,13.01 M15,10 H18 M15,13 H18 M15,16 H18" />
+</vector>
+

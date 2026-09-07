@@ -1,0 +1,24 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="64dp"
+    android:height="32dp"
+    android:viewportWidth="64"
+    android:viewportHeight="32">
+    <!-- ANTV Red Bold Text + HD Badge -->
+    <path
+        android:fillColor="#E53935"
+        android:pathData="M6,8h5l4,16h-4l-1-4h-4l-1,4h-4zM8,17h3l-1.5-6z" />
+    <path
+        android:fillColor="#E53935"
+        android:pathData="M18,8h4l5,10v-10h4v16h-4l-5-10v10h-4z" />
+    <path
+        android:fillColor="#E53935"
+        android:pathData="M31,8h12v4h-4v12h-4v-12h-4z" />
+    <path
+        android:fillColor="#E53935"
+        android:pathData="M43,8h4l3,11l3-11h4l-5,16h-4z" />
+    <!-- HD Badge -->
+    <path
+        android:fillColor="#00E5FF"
+        android:pathData="M56,12h6v2h-2v4h2v2h-6z M58,14h2v2h-2z" />
+</vector>
+

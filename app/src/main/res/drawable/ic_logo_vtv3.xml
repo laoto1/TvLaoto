@@ -1,0 +1,21 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="64dp"
+    android:height="32dp"
+    android:viewportWidth="64"
+    android:viewportHeight="32">
+    <!-- VTV Ribbon (Red, Green, Blue) -->
+    <path
+        android:fillColor="#E53935"
+        android:pathData="M6,6h9l-5,20h-9z" />
+    <path
+        android:fillColor="#43A047"
+        android:pathData="M16,6h9l-5,20h-9z" />
+    <path
+        android:fillColor="#1E88E5"
+        android:pathData="M26,6h9l-5,20h-9z" />
+    <!-- Number 3 (Red) -->
+    <path
+        android:fillColor="#E53935"
+        android:pathData="M40,6h14v5h-8v2h7v5h-7v3h8v5h-14z" />
+</vector>
+

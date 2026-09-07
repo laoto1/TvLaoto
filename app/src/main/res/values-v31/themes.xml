@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.TvLaoto" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/gta_midnight</item>
+        <item name="android:colorBackground">@color/gta_midnight</item>
+        <item name="android:colorPrimary">@color/gta_neon_pink</item>
+        <item name="android:colorPrimaryDark">@color/gta_midnight</item>
+        <item name="android:colorAccent">@color/gta_neon_cyan</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <!-- Android 12+ system splash: use dark background with our icon -->
+        <item name="android:windowSplashScreenBackground">@color/gta_midnight</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_launcher</item>
+    </style>
+</resources>
+

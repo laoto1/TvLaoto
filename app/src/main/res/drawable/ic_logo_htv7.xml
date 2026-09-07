@@ -1,0 +1,22 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="64dp"
+    android:height="32dp"
+    android:viewportWidth="64"
+    android:viewportHeight="32">
+    <!-- HTV Background Rhombus -->
+    <path
+        android:fillColor="#1E88E5"
+        android:pathData="M4,6h32l-6,20h-32z" />
+    <!-- HTV Text (White) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M9,10h4v4h4v-4h4v12h-4v-5h-4v5h-4z" />
+    <!-- Number 7 (Red Rhombus + White 7) -->
+    <path
+        android:fillColor="#E53935"
+        android:pathData="M38,6h22l-6,20h-22z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M45,10h12l-5,12h-4l3-8h-6z" />
+</vector>
+

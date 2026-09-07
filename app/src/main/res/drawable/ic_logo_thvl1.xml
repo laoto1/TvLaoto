@@ -1,0 +1,22 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="64dp"
+    android:height="32dp"
+    android:viewportWidth="64"
+    android:viewportHeight="32">
+    <!-- THVL Background Rounded Badge (Purple / Blue Gradient effect) -->
+    <path
+        android:fillColor="#3949AB"
+        android:pathData="M4,6h56v20h-56z" />
+    <path
+        android:fillColor="#E53935"
+        android:pathData="M46,6h14v20h-14z" />
+    <!-- THVL Text (White) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M8,10h5v2h-1.5v8h-2v-8h-1.5z M15,10h2v4h4v-4h2v10h-2v-4h-4v4h-2z M25,10h2l2,7l2-7h2l-3,10h-2z M35,10h2v8h5v2h-7z" />
+    <!-- Number 1 (White on Red) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M51,10h4v12h-3v-9l-2,2v-3z" />
+</vector>
+

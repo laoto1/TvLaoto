@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AFlix TV</string>
+    <string name="app_tagline">Live TV Streaming</string>
+    <string name="all_channels">ALL CHANNELS</string>
+    <string name="categories">CATEGORIES</string>
+    <string name="search_hint">Search channel or number.</string>
+    <string name="settings">SETTINGS</string>
+    <string name="custom_m3u_url">Custom M3U Playlist URL</string>
+    <string name="enter_m3u_hint">https://example.com/playlist.m3u</string>
+    <string name="load_playlist">LOAD PLAYLIST</string>
+    <string name="reset_default">RESTORE DEMO PLAYLIST</string>
+    <string name="language">Language</string>
+    <string name="vietnamese">Tiếng Việt</string>
+    <string name="english">English</string>
+    <string name="save">SAVE</string>
+    <string name="cancel">CANCEL</string>
+    <string name="loading_channels">LOADING CHANNELS...</string>
+    <string name="no_channels_found">No channels found</string>
+    <string name="channel_error">Unable to stream this channel. Please try another.</string>
+    <string name="retry">RETRY</string>
+    <string name="now_playing">NOW PLAYING</string>
+    <string name="press_back_exit">Press BACK again to exit</string>
+    <string name="dpad_guide">Up/Down: Change Channel     OK: Channel Info     BACK: Return to Grid</string>
+    <string name="stream_error">STREAM ERROR</string>
+    <string name="favorite">Favorite</string>
+    <string name="favorited">Favorited</string>
+    <string name="replay">Replay</string>
+    <string name="search_title">SEARCH CHANNELS</string>
+    <string name="search_placeholder">Enter channel name (e.g., HBO, ESPN, News)...</string>
+    <string name="search_submit">VIEW RESULTS</string>
+</resources>

@@ -1,0 +1,27 @@
+# Gradle
+.gradle/
+build/
+app/build/
+local.properties
+
+# IDE
+.idea/
+*.iml
+.kotlin/
+
+# Android
+app/release/
+*.apk
+*.aab
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Playwright MCP (local dev only)
+.playwright-mcp/
+
+# Logs
+*.log
+log.txt
+filtered_log.txt

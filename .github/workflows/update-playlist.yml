@@ -1,0 +1,62 @@
+name: Update Playlist Tokens
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  resolve-and-update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install playwright
+          playwright install chromium
+          playwright install-deps chromium
+
+      - name: Resolve all channels
+        run: |
+          python scripts/resolve_channels.py > /tmp/resolved.json
+          echo "Resolution result:"
+          python3 -c "
+          import json
+          with open('/tmp/resolved.json') as f:
+              data = json.load(f)
+          print(f\"Resolved: {data['resolved']}, Errors: {data.get('errors', [])}\")
+          for ch_id, ch in data['channels'].items():
+              status = '✅' if ch.get('url') else '❌'
+              print(f\"  {status} {ch_id}: {ch['name']}\")
+          "
+
+      - name: Generate M3U playlist
+        run: |
+          python scripts/generate_playlist.py /tmp/resolved.json resolved_playlist.m3u
+          echo "--- Playlist preview ---"
+          head -30 resolved_playlist.m3u
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add resolved_playlist.m3u
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "🔄 Auto-update resolved playlist $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            git push
+            echo "✅ Playlist updated and pushed"
+          fi
