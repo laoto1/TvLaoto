@@ -12,7 +12,6 @@ import androidx.media3.exoplayer.ExoPlayer
 import com.tvlaoto.data.model.IptvChannel
 import com.tvlaoto.data.model.EpgProgram
 import com.tvlaoto.data.repository.ChannelRepository
-import com.tvlaoto.network.StreamSniffer
 import androidx.media3.datasource.HttpDataSource
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -36,11 +35,6 @@ class PlayerViewModel(
 
     private val _isPlaying = MutableStateFlow(false)
     val isPlaying: StateFlow<Boolean> = _isPlaying.asStateFlow()
-
-    // Sniffer kept only for catchup (xem lại) feature
-    private val sniffer by lazy { StreamSniffer(application) }
-    private val _isDecryptingLink = MutableStateFlow(false)
-    val isDecryptingLink: StateFlow<Boolean> = _isDecryptingLink.asStateFlow()
 
     private val _isBuffering = MutableStateFlow(true)
     val isBuffering: StateFlow<Boolean> = _isBuffering.asStateFlow()
@@ -69,7 +63,6 @@ class PlayerViewModel(
 
     private var overlayHideJob: Job? = null
     private var allChannels: List<IptvChannel> = emptyList()
-    private val catchupTokenCache = mutableMapOf<String, String>()
     private val epgCache = mutableMapOf<String, List<EpgProgram>>()
 
     private val _currentCatchupProgram = MutableStateFlow<EpgProgram?>(null)
@@ -220,10 +213,9 @@ class PlayerViewModel(
         if (currentCh?.resolvedUrl != null && isHttpError) {
             val catchupProg = _currentCatchupProgram.value
             if (catchupProg != null) {
-                val cacheKey = "${currentCh.id}_${catchupProg.index}_${catchupProg.time}"
-                catchupTokenCache.remove(cacheKey)
-                _errorMessage.value = "Token xem lại hết hạn. Đang tải lại..."
-                playCatchup(catchupProg)
+                _errorMessage.value = "Token xem lại hết hạn."
+                _currentCatchupProgram.value = null
+                _isBuffering.value = false
                 return
             } else {
                 _errorMessage.value = "Token hết hạn. Đang tải lại..."
@@ -268,7 +260,7 @@ class PlayerViewModel(
         
         viewModelScope.launch {
             _isEpgLoading.value = true
-            val list = sniffer.scrapeEpg(channel.streamUrl)
+            val list = repository.fetchServerEpg(channel.name)
             if (list.isNotEmpty()) {
                 epgCache[channel.id] = list
             }
@@ -283,57 +275,26 @@ class PlayerViewModel(
         
         hideEpgPanel()
         _currentCatchupProgram.value = program
-        
-        val cacheKey = "${channel.id}_${program.index}_${program.time}"
-        val cachedUrl = catchupTokenCache[cacheKey]
-        
-        if (cachedUrl != null) {
+
+        // Use server-resolved catchup URL directly
+        val catchupUrl = program.catchupUrl
+        if (catchupUrl != null) {
             _isBuffering.value = true
+            com.tvlaoto.util.AppLogger.i("Player", "Playing catchup: ${program.title} url=${catchupUrl.take(60)}...")
             try {
-                val mediaSource = TvPlayerFactory.createMediaSource(channel.copy(streamUrl = cachedUrl))
+                val mediaSource = TvPlayerFactory.createMediaSource(channel.copy(streamUrl = catchupUrl))
                 player.setMediaSource(mediaSource)
                 player.prepare()
                 player.playWhenReady = true
             } catch (e: Exception) {
+                com.tvlaoto.util.AppLogger.e("Player", "Catchup play error", e)
                 _errorMessage.value = e.localizedMessage ?: "Lỗi phát luồng xem lại"
                 _isBuffering.value = false
             }
-            return
-        }
-        
-        viewModelScope.launch {
-            _isDecryptingLink.value = true
-            player.stop()
-            val replayUrl = sniffer.sniffCatchup(channel.streamUrl, program.index)
-            _isDecryptingLink.value = false
-            
-            if (replayUrl != null) {
-                catchupTokenCache[cacheKey] = replayUrl
-                try {
-                    val mediaSource = TvPlayerFactory.createMediaSource(channel.copy(streamUrl = replayUrl))
-                    player.setMediaSource(mediaSource)
-                    player.prepare()
-                    player.playWhenReady = true
-                } catch (e: Exception) {
-                    _errorMessage.value = e.localizedMessage ?: "Lỗi phát luồng xem lại"
-                    _isBuffering.value = false
-                }
-            } else {
-                // Restore Live playback using resolved URL
-                _currentCatchupProgram.value = null
-                val liveUrl = channel.resolvedUrl ?: channel.streamUrl
-                try {
-                    val mediaSource = TvPlayerFactory.createMediaSource(channel.copy(streamUrl = liveUrl))
-                    player.setMediaSource(mediaSource)
-                    player.prepare()
-                    player.playWhenReady = true
-                } catch (e: Exception) {
-                    // ignore
-                }
-                
-                _errorMessage.value = "Chương trình này hiện không khả dụng hoặc không tồn tại để xem lại!"
-                _isBuffering.value = false
-            }
+        } else {
+            _errorMessage.value = "Chương trình này hiện không có link xem lại."
+            _isBuffering.value = false
+            _currentCatchupProgram.value = null
         }
     }
 
@@ -341,7 +302,6 @@ class PlayerViewModel(
         super.onCleared()
         player.removeListener(this)
         player.release()
-        sniffer.destroyCachedWebView()
     }
 }
 

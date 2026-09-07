@@ -60,7 +60,6 @@ fun PlayerScreen(
     val context = LocalContext.current
     val currentChannel by viewModel.currentChannel.collectAsState()
     val isBuffering by viewModel.isBuffering.collectAsState()
-    val isDecryptingLink by viewModel.isDecryptingLink.collectAsState()
     val errorMessage by viewModel.errorMessage.collectAsState()
     val showOverlay by viewModel.showOverlay.collectAsState()
     val videoResolution by viewModel.videoResolution.collectAsState()
@@ -129,14 +128,7 @@ fun PlayerScreen(
         )
 
         // Buffering Indicator
-        if (isDecryptingLink) {
-            Box(
-                modifier = Modifier.fillMaxSize().background(Color(0x99000000)),
-                contentAlignment = Alignment.Center
-            ) {
-                NeonLoadingIndicator(text = "Đang bẻ khóa liên kết...")
-            }
-        } else if (isBuffering && errorMessage == null) {
+        if (isBuffering && errorMessage == null) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center

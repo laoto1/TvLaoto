@@ -26,9 +26,8 @@ class ChannelRepository(
 ) {
 
     companion object {
-        // URL to the resolved playlist with pre-extracted m3u8 tokens
-        // This is updated every 30 minutes by GitHub Actions
         const val RESOLVED_PLAYLIST_URL = "https://raw.githubusercontent.com/laoto1/TvLaoto/main/resolved_playlist.m3u"
+        const val RESOLVED_EPG_URL = "https://raw.githubusercontent.com/laoto1/TvLaoto/main/resolved_epg.json"
     }
 
     private val prefs: SharedPreferences =
@@ -245,6 +244,70 @@ class ChannelRepository(
         } catch (e: Exception) {
             com.tvlaoto.util.AppLogger.w("ChannelRepo", "Failed to fetch resolved playlist: ${e.message}")
         }
+    }
+
+    // Cache of server EPG data: channel name -> program list
+    private var serverEpgCache: Map<String, List<com.tvlaoto.data.model.EpgProgram>> = emptyMap()
+
+    /**
+     * Fetch EPG + catchup URLs from resolved_epg.json (GitHub Actions generated).
+     * Returns programs for a specific channel name.
+     */
+    suspend fun fetchServerEpg(channelName: String): List<com.tvlaoto.data.model.EpgProgram> = withContext(Dispatchers.IO) {
+        // Return from cache if already loaded
+        serverEpgCache[channelName]?.let { return@withContext it }
+
+        val url = RESOLVED_EPG_URL
+        if (url.isBlank()) return@withContext emptyList()
+
+        try {
+            val request = Request.Builder()
+                .url(url)
+                .header("User-Agent", "AFlix-TV/1.0")
+                .build()
+
+            val response = httpClient.newCall(request).execute()
+            if (!response.isSuccessful) return@withContext emptyList()
+
+            val body = response.body?.string() ?: return@withContext emptyList()
+            val json = org.json.JSONObject(body)
+            val channelsObj = json.optJSONObject("channels") ?: return@withContext emptyList()
+
+            val newCache = mutableMapOf<String, List<com.tvlaoto.data.model.EpgProgram>>()
+
+            val keys = channelsObj.keys()
+            while (keys.hasNext()) {
+                val chKey = keys.next()
+                val chObj = channelsObj.getJSONObject(chKey)
+                val name = chObj.optString("name", "")
+                val programsArr = chObj.optJSONArray("programs") ?: continue
+
+                val programs = mutableListOf<com.tvlaoto.data.model.EpgProgram>()
+                for (i in 0 until programsArr.length()) {
+                    val p = programsArr.getJSONObject(i)
+                    programs.add(
+                        com.tvlaoto.data.model.EpgProgram(
+                            index = p.optInt("index", i),
+                            time = p.optString("time", ""),
+                            title = p.optString("title", ""),
+                            isReplayable = p.optBoolean("is_replayable", false),
+                            startEpoch = p.optLong("start_epoch", 0),
+                            endEpoch = p.optLong("end_epoch", 0),
+                            catchupUrl = p.optString("catchup_url", "").ifBlank { null }
+                        )
+                    )
+                }
+                newCache[name] = programs
+            }
+
+            serverEpgCache = newCache
+            com.tvlaoto.util.AppLogger.i("ChannelRepo", "Loaded EPG for ${newCache.size} channels")
+
+        } catch (e: Exception) {
+            com.tvlaoto.util.AppLogger.w("ChannelRepo", "Failed to fetch EPG: ${e.message}")
+        }
+
+        serverEpgCache[channelName] ?: emptyList()
     }
 }
 

@@ -11,7 +11,7 @@ permissions:
 jobs:
   resolve-and-update:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
 
     steps:
       - name: Checkout
@@ -28,36 +28,43 @@ jobs:
           playwright install chromium
           playwright install-deps chromium
 
-      - name: Resolve all channels
+      - name: Resolve live channels
         run: |
           python scripts/resolve_channels.py > /tmp/resolved.json
-          echo "Resolution result:"
           python3 -c "
           import json
           with open('/tmp/resolved.json') as f:
               data = json.load(f)
-          print(f\"Resolved: {data['resolved']}, Errors: {data.get('errors', [])}\")
-          for ch_id, ch in data['channels'].items():
-              status = '✅' if ch.get('url') else '❌'
-              print(f\"  {status} {ch_id}: {ch['name']}\")
+          print(f\"Live: {data['resolved']}/{data['resolved']+len(data.get('errors',[]))} channels resolved\")
           "
 
       - name: Generate M3U playlist
         run: |
           python scripts/generate_playlist.py /tmp/resolved.json resolved_playlist.m3u
-          echo "--- Playlist preview ---"
-          head -30 resolved_playlist.m3u
+
+      - name: Resolve EPG + catchup
+        run: |
+          python scripts/resolve_epg.py > resolved_epg.json
+          python3 -c "
+          import json
+          with open('resolved_epg.json') as f:
+              data = json.load(f)
+          for ch_id, ch in data['channels'].items():
+              progs = ch['programs']
+              catchup_count = sum(1 for p in progs if p.get('catchup_url'))
+              print(f\"  {ch_id}: {len(progs)} programs, {catchup_count} catchup URLs\")
+          "
 
       - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add resolved_playlist.m3u
+          git add resolved_playlist.m3u resolved_epg.json
           if git diff --cached --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "🔄 Auto-update resolved playlist $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            git commit -m "🔄 Auto-update playlist + EPG $(date -u +%Y-%m-%dT%H:%M:%SZ)"
             git push
-            echo "✅ Playlist updated and pushed"
+            echo "✅ Updated"
           fi
 

@@ -9,5 +9,6 @@ data class EpgProgram(
     val title: String,
     val isReplayable: Boolean,
     val startEpoch: Long = 0L,
-    val endEpoch: Long = 0L
+    val endEpoch: Long = 0L,
+    val catchupUrl: String? = null  // Server-resolved catchup stream URL
 )

@@ -121,7 +121,6 @@ fun HomeScreen(
     val isEpgLoading by playerViewModel.isEpgLoading.collectAsState()
     val currentCatchupProgram by playerViewModel.currentCatchupProgram.collectAsState()
     val isBuffering by playerViewModel.isBuffering.collectAsState()
-    val isDecryptingLink by playerViewModel.isDecryptingLink.collectAsState()
     val errorMessage by playerViewModel.errorMessage.collectAsState()
 
     androidx.compose.runtime.LaunchedEffect(errorMessage) {
@@ -355,7 +354,6 @@ fun HomeScreen(
                         channel = currentPlayingChannel,
                         isPlaying = isPlaying,
                         isBuffering = isBuffering,
-                        isDecryptingLink = isDecryptingLink,
                         isCatchup = currentCatchupProgram != null,
                         onTogglePlayPause = {
                             if (isPlaying) playerViewModel.player.pause()

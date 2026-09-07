@@ -74,7 +74,6 @@ fun VideoPlayerPanel(
     channel: IptvChannel?,
     isPlaying: Boolean,
     isBuffering: Boolean,
-    isDecryptingLink: Boolean = false,
     isCatchup: Boolean = false,
     onTogglePlayPause: () -> Unit,
     onToggleFullscreen: () -> Unit,
@@ -180,16 +179,7 @@ fun VideoPlayerPanel(
         }
 
         // Loading Spinner while buffering
-        if (isDecryptingLink) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color(0x99000000)),
-                contentAlignment = Alignment.Center
-            ) {
-                NeonLoadingIndicator(text = "Đang bẻ khóa liên kết...")
-            }
-        } else if (isBuffering) {
+        if (isBuffering) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
