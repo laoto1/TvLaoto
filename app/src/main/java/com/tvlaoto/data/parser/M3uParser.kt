@@ -26,7 +26,6 @@ object M3uParser {
         var currentChannelName = "Unknown Channel"
         var currentUserAgent: String? = null
         var currentReferrer: String? = null
-        var currentSup = false
         var currentResolvedAt: Long = 0
         var channelCounter = 1
 
@@ -44,7 +43,6 @@ object M3uParser {
                     val parsedGroup = extractAttribute(line, "group-title")?.trim()
                     currentGroup = if (!parsedGroup.isNullOrBlank()) parsedGroup else "Tổng Hợp"
                     
-                    currentSup = extractAttribute(line, "sup") == "true"
                     currentResolvedAt = extractAttribute(line, "resolved-at")?.toLongOrNull() ?: 0
 
                     // Extract channel name after the last comma
@@ -81,7 +79,6 @@ object M3uParser {
                         tvgName = currentTvgName,
                         userAgent = currentUserAgent,
                         httpReferrer = currentReferrer,
-                        isSup = currentSup,
                         resolvedUrl = if (isResolved) line else null,
                         resolvedAt = currentResolvedAt
                     )
@@ -96,7 +93,6 @@ object M3uParser {
                     currentChannelName = "Unknown Channel"
                     currentUserAgent = null
                     currentReferrer = null
-                    currentSup = false
                     currentResolvedAt = 0
                 }
             }

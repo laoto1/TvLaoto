@@ -18,7 +18,6 @@ data class IptvChannel(
     val programTime: String = "Đang phát sóng",
     val programDescription: String = "",
     val isFavorite: Boolean = false,
-    val isSup: Boolean = false,
     val resolvedUrl: String? = null,   // Pre-resolved m3u8 URL with token
     val resolvedAt: Long = 0           // Unix timestamp when resolved
 )

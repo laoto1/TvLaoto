@@ -198,7 +198,7 @@ class ChannelRepository(
 
     /**
      * Fetch pre-resolved m3u8 URLs from gist and merge into current playlist.
-     * This replaces streamUrl with tokenized URLs for isSup channels.
+     * This merges tokenized URLs into the current playlist channels.
      */
     suspend fun fetchResolvedPlaylist() = withContext(Dispatchers.IO) {
         val url = RESOLVED_PLAYLIST_URL

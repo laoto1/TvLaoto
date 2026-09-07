@@ -37,10 +37,10 @@ class PlayerViewModel(
     private val _isPlaying = MutableStateFlow(false)
     val isPlaying: StateFlow<Boolean> = _isPlaying.asStateFlow()
 
+    // Sniffer kept only for catchup (xem lại) feature
+    private val sniffer by lazy { StreamSniffer(application) }
     private val _isDecryptingLink = MutableStateFlow(false)
     val isDecryptingLink: StateFlow<Boolean> = _isDecryptingLink.asStateFlow()
-
-    private val sniffer by lazy { StreamSniffer(application) }
 
     private val _isBuffering = MutableStateFlow(true)
     val isBuffering: StateFlow<Boolean> = _isBuffering.asStateFlow()
@@ -69,7 +69,6 @@ class PlayerViewModel(
 
     private var overlayHideJob: Job? = null
     private var allChannels: List<IptvChannel> = emptyList()
-    private val tokenCache = mutableMapOf<String, String>()
     private val catchupTokenCache = mutableMapOf<String, String>()
     private val epgCache = mutableMapOf<String, List<EpgProgram>>()
 
@@ -99,92 +98,30 @@ class PlayerViewModel(
         _epgList.value = emptyList()
         showOverlayTemporarily()
 
-        com.tvlaoto.util.AppLogger.i("Player", "Playing: ${channel.name} (${channel.id}) isSup=${channel.isSup}")
+        com.tvlaoto.util.AppLogger.i("Player", "Playing: ${channel.name} (${channel.id})")
         com.tvlaoto.util.AppLogger.d("Player", "Stream URL: ${channel.streamUrl}")
 
         repository.saveLastPlayedChannel(channel.id)
         
-        if (channel.isSup) {
+        // Fetch EPG if channel has resolved URL (VTVGo/THVL)
+        if (channel.resolvedUrl != null) {
             fetchEpg()
         }
 
-        if (channel.isSup) {
-            // Priority 1: Pre-resolved URL from server-side resolver
-            val resolvedUrl = channel.resolvedUrl
-            val resolvedAge = if (channel.resolvedAt > 0) System.currentTimeMillis() / 1000 - channel.resolvedAt else Long.MAX_VALUE
+        // Determine the actual URL to play
+        val playUrl = channel.resolvedUrl ?: channel.streamUrl
 
-            if (resolvedUrl != null && resolvedAge < 3600) {
-                // Resolved URL still fresh (< 1 hour old)
-                com.tvlaoto.util.AppLogger.d("Player", "Using pre-resolved URL (age=${resolvedAge}s)")
-                try {
-                    val mediaSource = TvPlayerFactory.createMediaSource(channel.copy(streamUrl = resolvedUrl))
-                    player.setMediaSource(mediaSource)
-                    player.prepare()
-                    player.playWhenReady = true
-                } catch (e: Exception) {
-                    com.tvlaoto.util.AppLogger.e("Player", "Resolved play error, falling back to sniff", e)
-                    sniffAndPlay(channel)
-                }
-            } else {
-                // Priority 2: Cached token from previous sniff
-                val cachedUrl = tokenCache[channel.streamUrl]
-                if (cachedUrl != null) {
-                    com.tvlaoto.util.AppLogger.d("Player", "Using cached token URL")
-                    try {
-                        val mediaSource = TvPlayerFactory.createMediaSource(channel.copy(streamUrl = cachedUrl))
-                        player.setMediaSource(mediaSource)
-                        player.prepare()
-                        player.playWhenReady = true
-                    } catch (e: Exception) {
-                        com.tvlaoto.util.AppLogger.e("Player", "Cached play error", e)
-                        _errorMessage.value = e.localizedMessage ?: "Lỗi phát luồng"
-                        _isBuffering.value = false
-                    }
-                } else {
-                    // Priority 3: Sniff via WebView (fallback)
-                    sniffAndPlay(channel)
-                }
-            }
-        } else {
-            try {
-                val mediaSource = TvPlayerFactory.createMediaSource(channel)
-                player.setMediaSource(mediaSource)
-                player.prepare()
-                player.playWhenReady = true
-            } catch (e: Exception) {
-                com.tvlaoto.util.AppLogger.e("Player", "Direct play error", e)
-                _errorMessage.value = e.localizedMessage ?: "Failed to play stream"
-                _isBuffering.value = false
-            }
-        }
-    }
+        com.tvlaoto.util.AppLogger.d("Player", "Play URL: ${playUrl.take(80)}...")
 
-    private fun sniffAndPlay(channel: IptvChannel) {
-        viewModelScope.launch {
-            _isDecryptingLink.value = true
-            player.stop()
-            com.tvlaoto.util.AppLogger.i("Player", "Sniffing stream for: ${channel.name}")
-            val realUrl = sniffer.sniff(channel.streamUrl)
-            _isDecryptingLink.value = false
-            
-            if (realUrl != null) {
-                com.tvlaoto.util.AppLogger.i("Player", "Sniff OK: ${realUrl.take(80)}...")
-                tokenCache[channel.streamUrl] = realUrl
-                try {
-                    val mediaSource = TvPlayerFactory.createMediaSource(channel.copy(streamUrl = realUrl))
-                    player.setMediaSource(mediaSource)
-                    player.prepare()
-                    player.playWhenReady = true
-                } catch (e: Exception) {
-                    com.tvlaoto.util.AppLogger.e("Player", "Play after sniff error", e)
-                    _errorMessage.value = e.localizedMessage ?: "Lỗi phát luồng bị khóa"
-                    _isBuffering.value = false
-                }
-            } else {
-                com.tvlaoto.util.AppLogger.e("Player", "Sniff FAILED for: ${channel.name}")
-                _errorMessage.value = "Không thể bẻ khóa liên kết."
-                _isBuffering.value = false
-            }
+        try {
+            val mediaSource = TvPlayerFactory.createMediaSource(channel.copy(streamUrl = playUrl))
+            player.setMediaSource(mediaSource)
+            player.prepare()
+            player.playWhenReady = true
+        } catch (e: Exception) {
+            com.tvlaoto.util.AppLogger.e("Player", "Play error", e)
+            _errorMessage.value = e.localizedMessage ?: "Lỗi phát luồng"
+            _isBuffering.value = false
         }
     }
 
@@ -280,7 +217,7 @@ class PlayerViewModel(
         com.tvlaoto.util.AppLogger.e("Player", "Player error: code=${error.errorCode} msg=${error.message}", error)
         val currentCh = _currentChannel.value
         val isHttpError = error.errorCode == PlaybackException.ERROR_CODE_IO_BAD_HTTP_STATUS || error.cause is HttpDataSource.HttpDataSourceException
-        if (currentCh?.isSup == true && isHttpError) {
+        if (currentCh?.resolvedUrl != null && isHttpError) {
             val catchupProg = _currentCatchupProgram.value
             if (catchupProg != null) {
                 val cacheKey = "${currentCh.id}_${catchupProg.index}_${catchupProg.time}"
@@ -289,9 +226,8 @@ class PlayerViewModel(
                 playCatchup(catchupProg)
                 return
             } else {
-                tokenCache.remove(currentCh.streamUrl)
-                _errorMessage.value = "Token hết hạn. Đang lấy lại luồng mới..."
-                playChannel(currentCh) // Sniff lại
+                _errorMessage.value = "Token hết hạn. Đang tải lại..."
+                playChannel(currentCh)
                 return
             }
         }
@@ -323,7 +259,7 @@ class PlayerViewModel(
 
     private fun fetchEpg() {
         val channel = _currentChannel.value ?: return
-        if (!channel.isSup) return
+        if (channel.resolvedUrl == null) return
         
         if (epgCache.containsKey(channel.id)) {
             _epgList.value = epgCache[channel.id]!!
@@ -343,7 +279,7 @@ class PlayerViewModel(
 
     fun playCatchup(program: EpgProgram) {
         val channel = _currentChannel.value ?: return
-        if (!channel.isSup) return
+        if (channel.resolvedUrl == null) return
         
         hideEpgPanel()
         _currentCatchupProgram.value = program
@@ -383,30 +319,16 @@ class PlayerViewModel(
                     _isBuffering.value = false
                 }
             } else {
-                // Restore Live playback
+                // Restore Live playback using resolved URL
                 _currentCatchupProgram.value = null
-                val cachedUrl = tokenCache[channel.streamUrl]
-                if (cachedUrl != null) {
-                    try {
-                        val mediaSource = TvPlayerFactory.createMediaSource(channel.copy(streamUrl = cachedUrl))
-                        player.setMediaSource(mediaSource)
-                        player.prepare()
-                        player.playWhenReady = true
-                    } catch (e: Exception) {
-                        // ignore
-                    }
-                } else {
-                    // Fallback to re-sniffing if not in cache
-                    viewModelScope.launch {
-                        val realUrl = sniffer.sniff(channel.streamUrl)
-                        if (realUrl != null) {
-                            tokenCache[channel.streamUrl] = realUrl
-                            val mediaSource = TvPlayerFactory.createMediaSource(channel.copy(streamUrl = realUrl))
-                            player.setMediaSource(mediaSource)
-                            player.prepare()
-                            player.playWhenReady = true
-                        }
-                    }
+                val liveUrl = channel.resolvedUrl ?: channel.streamUrl
+                try {
+                    val mediaSource = TvPlayerFactory.createMediaSource(channel.copy(streamUrl = liveUrl))
+                    player.setMediaSource(mediaSource)
+                    player.prepare()
+                    player.playWhenReady = true
+                } catch (e: Exception) {
+                    // ignore
                 }
                 
                 _errorMessage.value = "Chương trình này hiện không khả dụng hoặc không tồn tại để xem lại!"

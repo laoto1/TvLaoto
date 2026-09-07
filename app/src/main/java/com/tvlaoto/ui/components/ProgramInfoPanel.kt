@@ -144,7 +144,7 @@ fun ProgramInfoPanel(
             verticalAlignment = Alignment.CenterVertically
         ) {
             // 1. Replay
-            if (channel.isSup) {
+            if (channel.resolvedUrl != null) {
                 EpgActionButton(
                     title = stringResource(R.string.replay),
                     icon = Icons.Default.Replay,
