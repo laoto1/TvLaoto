@@ -248,6 +248,20 @@ class ChannelRepository(
         }
     }
 
+    /**
+     * Force re-fetch resolved URLs from GitHub (called on 403 token expiry).
+     */
+    suspend fun refreshResolvedUrls() {
+        fetchResolvedPlaylist()
+    }
+
+    /**
+     * Find a channel by its ID in the current playlist.
+     */
+    fun getChannelById(id: String): IptvChannel? {
+        return _playlist.value?.categories?.flatMap { it.channels }?.find { it.id == id }
+    }
+
     // Cache of server EPG data: channel name -> program list
     private var serverEpgCache: Map<String, List<com.tvlaoto.data.model.EpgProgram>> = emptyMap()
 

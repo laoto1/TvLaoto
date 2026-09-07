@@ -218,8 +218,17 @@ class PlayerViewModel(
                 _isBuffering.value = false
                 return
             } else {
+                // Re-fetch resolved playlist for fresh tokens
                 _errorMessage.value = "Token hết hạn. Đang tải lại..."
-                playChannel(currentCh)
+                viewModelScope.launch {
+                    repository.refreshResolvedUrls()
+                    val freshChannel = repository.getChannelById(currentCh.id)
+                    if (freshChannel != null && freshChannel.resolvedUrl != currentCh.resolvedUrl) {
+                        playChannel(freshChannel)
+                    } else {
+                        playChannel(currentCh)
+                    }
+                }
                 return
             }
         }
