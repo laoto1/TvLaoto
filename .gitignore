@@ -21,8 +21,42 @@ Thumbs.db
 # Playwright MCP (local dev only)
 .playwright-mcp/
 
+# Node
+node_modules/
+package-lock.json
+package.json
+
 # Logs
 *.log
 log.txt
 filtered_log.txt
 
+# Dev test scripts in root (not scripts/ or space/)
+/test*.py
+/fix*.py
+/check*.py
+/add*.py
+/update*.py
+/scan*.py
+/debug*.py
+/create*.py
+/remove*.py
+/revert*.py
+/rewrite*.py
+/recreate*.py
+/downgrade.py
+/download*.py
+/opt*.py
+/read*.py
+/trace_api.js
+
+# HTML test files in root
+/*.html
+
+# Temp screenshots in root
+/mumu*.png
+/screen*.png
+/vtvgo*.png
+
+# Temp text
+/temp_*.txt
