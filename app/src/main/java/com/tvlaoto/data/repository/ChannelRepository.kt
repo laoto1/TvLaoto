@@ -38,6 +38,9 @@ class ChannelRepository(
         const val TV360_GET_LINK_API = "https://tv360.vn/public/v1/composite/get-link"
         const val TV360_SCHEDULE_API = "https://tv360.vn/public/v1/live/get-live-schedule"
         const val TV360_AES_SECRET = "eNdtOeNDeNcRyPteDsCREt#2022"
+        const val TV360_AUTH_TOKEN = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxNjEyNTg1OTkiLCJ1c2VySWQiOjE2MTI1ODU5OSwicHJvZmlsZUlkIjoxNjE0MTA4NDYsImR2aSI6MTAyODE3OTU3NiwiY29udGVudEZpbHRlciI6IjEwMCIsImduYW1lIjoiIiwib3NUeXBlIjoiV0VCIiwiaWF0IjoxNzg4ODgzMzU1LCJleHAiOjE3OTE0NzUzNTV9.4h6ytNsQ43zRCNFhoeJj8K9R5huhugbRkFZ-R5w3yUXoIXR7I6wuf822kjv2-vfxZ6Jd0YuOOC-OTB_nbZCEAw"
+        const val TV360_DEVICE_ID = "web_9bb25a58-b0e9-4273-b207-8b818e3f5e9a"
+        const val TV360_USER_ID = "161258599"
 
         // TV360 channel ID mapping: THVL name -> TV360 channel ID
         val TV360_CHANNEL_MAP = mapOf(
@@ -602,7 +605,7 @@ class ChannelRepository(
         val tv360Id = TV360_CHANNEL_MAP[channelKey.lowercase()] ?: channelKey.toIntOrNull() ?: return@withContext null
         try {
             val timestamp = System.currentTimeMillis() / 1000
-            val deviceId = "web_${java.util.UUID.randomUUID()}"
+            val deviceId = TV360_DEVICE_ID
             val sessionId = java.util.UUID.randomUUID().toString()
             val params = "id=$tv360Id&type=live&mod=LIVE&t=$timestamp&secured=true&drm=3%2C4&price=0&subInfo=3&llc=1&groupChannel=0"
             val sq = URLEncoder.encode(tv360Encrypt(params), "UTF-8")
@@ -614,7 +617,8 @@ class ChannelRepository(
                 .header("Accept", "application/json, text/plain, */*")
                 .header("Content-Type", "application/json")
                 .header("Referer", "https://tv360.vn/")
-                .header("Cookie", "device-id=$deviceId; shared-device-id=$deviceId; session-id=$sessionId")
+                .header("authorization", "Bearer $TV360_AUTH_TOKEN")
+                .header("Cookie", "device-id=$deviceId; shared-device-id=$deviceId; nd13=${TV360_USER_ID}_1; NEXT_LOCALE=vi; session-id=$sessionId")
                 .build()
 
             val response = httpClient.newCall(request).execute()
@@ -673,6 +677,8 @@ class ChannelRepository(
                 .url(url)
                 .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
                 .header("Referer", "https://tv360.vn/")
+                .header("authorization", "Bearer $TV360_AUTH_TOKEN")
+                .header("Cookie", "device-id=$TV360_DEVICE_ID; shared-device-id=$TV360_DEVICE_ID; nd13=${TV360_USER_ID}_1; NEXT_LOCALE=vi")
                 .build()
 
             val response = httpClient.newCall(request).execute()
