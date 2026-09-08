@@ -73,6 +73,11 @@ class ChannelRepository(
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
 
+    var lastTv360Error: String? = null
+        private set
+
+    private val tv360SessionId: String = java.util.UUID.randomUUID().toString()
+
     private fun loadSettings(): AppSettings {
         return AppSettings(
             customM3uUrl = prefs.getString("custom_m3u_url", "") ?: "",
@@ -601,13 +606,13 @@ class ChannelRepository(
      * @param channelKey e.g. "thvl1"
      * @return m3u8 URL or null
      */
-    suspend fun fetchTv360Url(channelKey: String): String? = withContext(Dispatchers.IO) {
-        val tv360Id = TV360_CHANNEL_MAP[channelKey.lowercase()] ?: channelKey.toIntOrNull() ?: return@withContext null
+    private fun doFetchTv360(tv360Id: Int, isMovie: Boolean): String? {
         try {
             val timestamp = System.currentTimeMillis() / 1000
             val deviceId = TV360_DEVICE_ID
-            val sessionId = java.util.UUID.randomUUID().toString()
-            val params = "id=$tv360Id&type=live&mod=LIVE&t=$timestamp&secured=true&drm=3%2C4&price=0&subInfo=3&llc=1&groupChannel=0"
+            val price = if (isMovie) 5000 else 0
+            val groupChannel = if (isMovie) 1 else 0
+            val params = "id=$tv360Id&type=live&mod=LIVE&t=$timestamp&secured=true&drm=3%2C4&price=$price&subInfo=3&llc=1&groupChannel=$groupChannel"
             val sq = URLEncoder.encode(tv360Encrypt(params), "UTF-8")
             val url = "$TV360_GET_LINK_API?sq=$sq&secured=true"
 
@@ -618,25 +623,32 @@ class ChannelRepository(
                 .header("Content-Type", "application/json")
                 .header("Referer", "https://tv360.vn/")
                 .header("authorization", "Bearer $TV360_AUTH_TOKEN")
-                .header("Cookie", "device-id=$deviceId; shared-device-id=$deviceId; nd13=${TV360_USER_ID}_1; NEXT_LOCALE=vi; session-id=$sessionId")
+                .header("Cookie", "device-id=$deviceId; shared-device-id=$deviceId; nd13=${TV360_USER_ID}_1; NEXT_LOCALE=vi; session-id=$tv360SessionId")
                 .build()
 
             val response = httpClient.newCall(request).execute()
-            val body = response.body?.string() ?: return@withContext null
+            val body = response.body?.string() ?: return null
 
             val json = org.json.JSONObject(body)
-            if (json.optInt("errorCode") != 200) {
-                com.tvlaoto.util.AppLogger.w("ChannelRepo", "TV360 error: ${json.optString("message")}")
-                return@withContext null
+            val code = json.optInt("errorCode")
+            if (code != 200) {
+                val rawMsg = json.optString("message", "")
+                com.tvlaoto.util.AppLogger.w("ChannelRepo", "TV360 error ($code) for $tv360Id (isMovie=$isMovie): $rawMsg")
+                lastTv360Error = when (code) {
+                    428 -> "Tài khoản đang xem trên thiết bị khác (tối đa 2 thiết bị đồng thời)"
+                    404 -> "Kênh này hiện tạm ngừng phát sóng trên TV360"
+                    401 -> "Kênh này yêu cầu tài khoản hoặc gói cước TV360"
+                    else -> rawMsg.ifEmpty { "Không thể tải luồng phát" }
+                }
+                return null
             }
 
             val encryptedData = json.optString("data", "")
-            if (encryptedData.isEmpty()) return@withContext null
+            if (encryptedData.isEmpty()) return null
 
             val decrypted = tv360Decrypt(encryptedData)
             com.tvlaoto.util.AppLogger.d("ChannelRepo", "TV360 decrypted: ${decrypted.take(150)}...")
 
-            // Decrypted data is a JSON string with urlStreaming, url or linkPlay field
             val dataJson = org.json.JSONObject(decrypted)
             val linkPlay = dataJson.optString("urlStreaming", "")
                 .ifEmpty { dataJson.optString("url", "") }
@@ -645,23 +657,36 @@ class ChannelRepository(
 
             if (linkPlay.isNotEmpty()) {
                 com.tvlaoto.util.AppLogger.i("ChannelRepo", "TV360 URL: ${linkPlay.take(80)}...")
-                return@withContext linkPlay
+                lastTv360Error = null
+                return linkPlay
             }
 
-            // Try finding m3u8 or mpd URL in decrypted text
             val streamRegex = Regex("""https?://[^\s"']+\.(m3u8|mpd)[^\s"']*""")
             val match = streamRegex.find(decrypted)
             if (match != null) {
                 com.tvlaoto.util.AppLogger.i("ChannelRepo", "TV360 stream: ${match.value.take(80)}...")
-                return@withContext match.value
+                lastTv360Error = null
+                return match.value
             }
 
             com.tvlaoto.util.AppLogger.w("ChannelRepo", "TV360: no URL in decrypted data")
-            null
+            return null
         } catch (e: Exception) {
             com.tvlaoto.util.AppLogger.e("ChannelRepo", "TV360 fetch error: ${e.message}", e)
-            null
+            lastTv360Error = "Lỗi kết nối TV360: ${e.message}"
+            return null
         }
+    }
+
+    suspend fun fetchTv360Url(channelKey: String): String? = withContext(Dispatchers.IO) {
+        val tv360Id = TV360_CHANNEL_MAP[channelKey.lowercase()] ?: channelKey.toIntOrNull() ?: return@withContext null
+        val isMovie = tv360Id in setOf(9903, 10009, 10010, 10011, 10012, 10013, 10055) || tv360Id >= 10000
+        var url = doFetchTv360(tv360Id, isMovie)
+        if (url == null && (lastTv360Error?.contains("không hợp lệ") == true || lastTv360Error?.contains("S-006") == true)) {
+            com.tvlaoto.util.AppLogger.i("ChannelRepo", "Retrying TV360 for $tv360Id with alternate parameters...")
+            url = doFetchTv360(tv360Id, !isMovie)
+        }
+        url
     }
 
     /**

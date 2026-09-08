@@ -135,7 +135,8 @@ class PlayerViewModel(
                             player.playWhenReady = true
                         } else {
                             com.tvlaoto.util.AppLogger.w("Player", "TV360 URL resolution failed for $tv360Key (${channel.name})")
-                            _errorMessage.value = "Kênh này yêu cầu tài khoản TV360 hoặc tạm ngừng phát"
+                            val errorMsg = repository.lastTv360Error ?: "Kênh này tạm thời không thể phát, vui lòng thử lại sau"
+                            _errorMessage.value = errorMsg
                             _isBuffering.value = false
                         }
                     }
