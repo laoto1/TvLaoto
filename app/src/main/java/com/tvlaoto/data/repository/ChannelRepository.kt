@@ -601,10 +601,14 @@ class ChannelRepository(
         return String(cipher.doFinal(Base64.decode(ciphertext, Base64.DEFAULT)))
     }
 
+    /** Last parsed 428 error code for external checking */
+    var lastTv360ErrorCode: Int = 0
+        private set
+
     /**
-     * Fetch live stream URL for THVL channel from TV360 API.
-     * @param channelKey e.g. "thvl1"
-     * @return m3u8 URL or null
+     * Fetch live stream URL from TV360 API.
+     * Returns: streaming URL, or null on failure (check lastTv360Error for details).
+     * On 428 (device limit): parses active device list and sets descriptive error.
      */
     private fun doFetchTv360(tv360Id: Int, isMovie: Boolean): String? {
         try {
@@ -631,18 +635,48 @@ class ChannelRepository(
 
             val json = org.json.JSONObject(body)
             val code = json.optInt("errorCode")
+            lastTv360ErrorCode = code
             if (code != 200) {
                 val rawMsg = json.optString("message", "")
                 com.tvlaoto.util.AppLogger.w("ChannelRepo", "TV360 error ($code) for $tv360Id (isMovie=$isMovie): $rawMsg")
-                lastTv360Error = when (code) {
-                    428 -> "Tài khoản đang xem trên thiết bị khác (tối đa 2 thiết bị đồng thời)"
-                    404 -> "Kênh này hiện tạm ngừng phát sóng trên TV360"
-                    401 -> "Kênh này yêu cầu tài khoản hoặc gói cước TV360"
-                    else -> rawMsg.ifEmpty { "Không thể tải luồng phát" }
+
+                if (code == 428) {
+                    // Parse encrypted device data to get active device list
+                    val encData = json.optString("data", "")
+                    var deviceCount = 0
+                    if (encData.isNotEmpty()) {
+                        try {
+                            val dec = tv360Decrypt(encData)
+                            val devJson = org.json.JSONObject(dec)
+                            val devArr = devJson.optJSONArray("device")
+                            deviceCount = devArr?.length() ?: 0
+                            val devNames = mutableListOf<String>()
+                            if (devArr != null) {
+                                for (i in 0 until devArr.length()) {
+                                    val d = devArr.getJSONObject(i)
+                                    val name = d.optString("deviceName", "unknown")
+                                    val osType = d.optString("osAppType", "")
+                                    devNames.add("$name($osType)")
+                                }
+                            }
+                            com.tvlaoto.util.AppLogger.w("ChannelRepo", "TV360 device limit: $deviceCount active devices: ${devNames.joinToString()}")
+                        } catch (e: Exception) {
+                            com.tvlaoto.util.AppLogger.w("ChannelRepo", "TV360 428 data parse error: ${e.message}")
+                        }
+                    }
+                    lastTv360Error = "Tài khoản đang xem trên $deviceCount thiết bị khác. " +
+                        "Vui lòng tắt luồng xem trên thiết bị khác hoặc đợi vài phút."
+                } else {
+                    lastTv360Error = when (code) {
+                        404 -> "Kênh này hiện tạm ngừng phát sóng trên TV360"
+                        401 -> "Kênh này yêu cầu tài khoản hoặc gói cước TV360"
+                        else -> rawMsg.ifEmpty { "Không thể tải luồng phát" }
+                    }
                 }
                 return null
             }
 
+            lastTv360ErrorCode = 200
             val encryptedData = json.optString("data", "")
             if (encryptedData.isEmpty()) return null
 
@@ -682,9 +716,21 @@ class ChannelRepository(
         val tv360Id = TV360_CHANNEL_MAP[channelKey.lowercase()] ?: channelKey.toIntOrNull() ?: return@withContext null
         val isMovie = tv360Id in setOf(9903, 10009, 10010, 10011, 10012, 10013, 10055) || tv360Id >= 10000
         var url = doFetchTv360(tv360Id, isMovie)
+
+        // Auto-retry on S-006 with alternate parameters
         if (url == null && (lastTv360Error?.contains("không hợp lệ") == true || lastTv360Error?.contains("S-006") == true)) {
             com.tvlaoto.util.AppLogger.i("ChannelRepo", "Retrying TV360 for $tv360Id with alternate parameters...")
             url = doFetchTv360(tv360Id, !isMovie)
+        }
+
+        // Auto-retry on 428 (device limit) with delay — sessions may expire between retries
+        if (url == null && lastTv360ErrorCode == 428) {
+            for (attempt in 1..2) {
+                com.tvlaoto.util.AppLogger.i("ChannelRepo", "TV360 device limit retry $attempt/2 for $tv360Id (waiting 5s)...")
+                Thread.sleep(5000)
+                url = doFetchTv360(tv360Id, isMovie)
+                if (url != null || lastTv360ErrorCode != 428) break
+            }
         }
         url
     }
