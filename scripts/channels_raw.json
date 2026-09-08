@@ -1,0 +1,468 @@
+﻿{
+    "data":  {
+                 "1":  {
+                           "id":  "1",
+                           "name":  "VTV1",
+                           "logo":  "https://thumb.vtvdigital.org/transform?url=https://vtvgo-next-assets.vtvdigital.vn/prod/images/channel/20260905/2026090510/df56581896-vtv1.webp",
+                           "thumbnail":  "https://thumb.vtvdigital.org/transform?url=https://vtvgo-next-assets.vtvdigital.vn/prod/images/channel/20260905/2026090510/d978b81d5e-thumb-vtv1.webp",
+                           "pressedIndex":  1,
+                           "platforms":  8191,
+                           "allowCastPlatforms":  [
+                                                      2,
+                                                      4,
+                                                      5
+                                                  ],
+                           "catalogIds":  [
+                                              {
+                                                  "catalogId":  "6a95b9e9cc5bb9fa8eeac4db",
+                                                  "orderIndex":  "001"
+                                              }
+                                          ],
+                           "namespaceIds":  [
+                                                "6a95b9e9cc5bb9fa8eeac4fd"
+                                            ],
+                           "mustLogin":  false,
+                           "p2pEnabled":  false,
+                           "catchUpToVodEnabled":  true,
+                           "showMaintenanceBanner":  false,
+                           "epgChannelId":  "Wzer61DpE9",
+                           "catchUpTimeType":  "hour",
+                           "maxCatchUpTimeValue":  192,
+                           "defaultCatchUpTimeValue":  24,
+                           "catchUpDelayMinutes":  30,
+                           "startOverPlanIds":  [
+                                                    "premium",
+                                                    "premium-vtv",
+                                                    "test-dv"
+                                                ],
+                           "enabled":  true,
+                           "condition":  {
+                                             "visibility":  {
+                                                                "mode":  "manual",
+                                                                "enabled":  true
+                                                            }
+                                         }
+                       },
+                 "13":  {
+                            "id":  "13",
+                            "name":  "VTV6",
+                            "logo":  "https://thumb.vtvdigital.org/transform?url=https://vtvgo-next-assets.vtvdigital.vn/prod/images/channel/20260905/2026090510/cb01e1c339-vtv6.webp",
+                            "thumbnail":  "https://thumb.vtvdigital.org/transform?url=https://vtvgo-next-assets.vtvdigital.vn/prod/images/channel/20260905/2026090510/39a423131f-thumb-vtv6.webp",
+                            "pressedIndex":  13,
+                            "platforms":  8191,
+                            "catalogIds":  [
+                                               {
+                                                   "catalogId":  "6a95b9e9cc5bb9fa8eeac4db",
+                                                   "orderIndex":  "002000000008"
+                                               }
+                                           ],
+                            "namespaceIds":  [
+                                                 "6a95b9e9cc5bb9fa8eeac4fd"
+                                             ],
+                            "mustLogin":  false,
+                            "p2pEnabled":  false,
+                            "catchUpToVodEnabled":  false,
+                            "showMaintenanceBanner":  false,
+                            "epgChannelId":  "5RIj8HcBnu",
+                            "catchUpTimeType":  "hour",
+                            "maxCatchUpTimeValue":  192,
+                            "defaultCatchUpTimeValue":  24,
+                            "catchUpDelayMinutes":  30,
+                            "startOverPlanIds":  [
+                                                     "premium",
+                                                     "premium-vtv",
+                                                     "worldcup",
+                                                     "combo",
+                                                     "VTVPrime-WC",
+                                                     "MBLIFE",
+                                                     "sctv-plus",
+                                                     "VTVPrime-VTVgoPlus",
+                                                     "OneVTV",
+                                                     "VHMHALONGXANH",
+                                                     "GreenSM",
+                                                     "VHMCanGio",
+                                                     "VHMHAIVANBAY",
+                                                     "sctv-plus-nb",
+                                                     "ABBank",
+                                                     "Vietcombank",
+                                                     "NCB",
+                                                     "VPBANK",
+                                                     "VinFast",
+                                                     "WorldcupMax",
+                                                     "test-dv"
+                                                 ],
+                            "enabled":  true,
+                            "condition":  {
+                                              "visibility":  {
+                                                                 "mode":  "manual",
+                                                                 "enabled":  true
+                                                             }
+                                          }
+                        },
+                 "17":  {
+                            "id":  "17",
+                            "name":  "Truyền hình Hà Nội 2",
+                            "logo":  "https://thumb.vtvdigital.org/transform?url=https://vtvgo-assets.vtvdigital.vn/assets/images/v2/channel/20250630/2025063000/QxWgqaBoV4-HNi2HD_150x902_1675158865.webp",
+                            "thumbnail":  "https://thumb.vtvdigital.org/transform?url=https://vtvgo-assets.vtvdigital.vn/assets/images/v2/channel/20250630/2025063000/G59NDlU7JQ-803c5edc-7e99-4633-9904-e71b26463575.webp",
+                            "pressedIndex":  37,
+                            "platforms":  4095,
+                            "catalogIds":  [
+                                               {
+                                                   "catalogId":  "6a95b9e9cc5bb9fa8eeac4da",
+                                                   "orderIndex":  "001000000004"
+                                               },
+                                               {
+                                                   "catalogId":  "6a95b9e9cc5bb9fa8eeac4dc",
+                                                   "orderIndex":  "001000000002"
+                                               },
+                                               {
+                                                   "catalogId":  "6a95b9e9cc5bb9fa8eeac4de",
+                                                   "orderIndex":  "001000000000"
+                                               },
+                                               {
+                                                   "catalogId":  "6a95b9e9cc5bb9fa8eeac4df",
+                                                   "orderIndex":  "001000000000"
+                                               }
+                                           ],
+                            "namespaceIds":  [
+                                                 "6a95b9e9cc5bb9fa8eeac4fd"
+                                             ],
+                            "mustLogin":  false,
+                            "p2pEnabled":  false,
+                            "catchUpToVodEnabled":  false,
+                            "showMaintenanceBanner":  false,
+                            "epgChannelId":  "RyB8DEt5om",
+                            "catchUpTimeType":  "day",
+                            "enabled":  true,
+                            "condition":  {
+                                              "visibility":  {
+                                                                 "mode":  "manual",
+                                                                 "enabled":  true
+                                                             }
+                                          }
+                        },
+                 "18":  {
+                            "id":  "18",
+                            "name":  "Truyền hình Phú Yên",
+                            "logo":  "https://thumb.vtvdigital.org/transform?url=https://vtvgo-assets.vtvdigital.vn/assets/images/v2/logo/phuyen1.jpg",
+                            "thumbnail":  "https://thumb.vtvdigital.org/transform?url=https://vtvgo-images.vtvdigital.vn/images/20230705/4056a4d1-b940-4226-a927-0759f9a1bf81.jpg?width=500",
+                            "pressedIndex":  188,
+                            "platforms":  8191,
+                            "allowCastPlatforms":  [
+                                                       2,
+                                                       4,
+                                                       5
+                                                   ],
+                            "catalogIds":  [
+                                               {
+                                                   "catalogId":  "6a95b9e9cc5bb9fa8eeac4da",
+                                                   "orderIndex":  "001000000301"
+                                               }
+                                           ],
+                            "namespaceIds":  [
+                                                 "6a95b9e9cc5bb9fa8eeac4fd"
+                                             ],
+                            "mustLogin":  false,
+                            "p2pEnabled":  false,
+                            "catchUpToVodEnabled":  true,
+                            "showMaintenanceBanner":  false,
+                            "enabled":  true,
+                            "condition":  {
+                                              "visibility":  {
+                                                                 "mode":  "manual",
+                                                                 "enabled":  false
+                                                             }
+                                          }
+                        },
+                 "2":  {
+                           "id":  "2",
+                           "name":  "VTV2",
+                           "logo":  "https://thumb.vtvdigital.org/transform?url=https://vtvgo-next-assets.vtvdigital.vn/prod/images/channel/20260905/2026090510/ed6bfd7f53-vtv2.webp",
+                           "thumbnail":  "https://thumb.vtvdigital.org/transform?url=https://vtvgo-next-assets.vtvdigital.vn/prod/images/channel/20260905/2026090510/c0b2ac5577-thumb-vtv2.webp",
+                           "pressedIndex":  2,
+                           "platforms":  4095,
+                           "allowCastPlatforms":  [
+                                                      2,
+                                                      4,
+                                                      5
+                                                  ],
+                           "catalogIds":  [
+                                              {
+                                                  "catalogId":  "6a95b9e9cc5bb9fa8eeac4db",
+                                                  "orderIndex":  "002000000002"
+                                              }
+                                          ],
+                           "namespaceIds":  [
+                                                "6a95b9e9cc5bb9fa8eeac4fd"
+                                            ],
+                           "mustLogin":  false,
+                           "p2pEnabled":  false,
+                           "catchUpToVodEnabled":  true,
+                           "showMaintenanceBanner":  false,
+                           "epgChannelId":  "62FPb0qUU6",
+                           "catchUpTimeType":  "hour",
+                           "maxCatchUpTimeValue":  192,
+                           "defaultCatchUpTimeValue":  24,
+                           "catchUpDelayMinutes":  30,
+                           "startOverPlanIds":  [
+                                                    "premium",
+                                                    "premium-vtv"
+                                                ],
+                           "enabled":  true,
+                           "condition":  {
+                                             "visibility":  {
+                                                                "mode":  "manual",
+                                                                "enabled":  true
+                                                            }
+                                         }
+                       },
+                 "3":  {
+                           "id":  "3",
+                           "name":  "VTV3",
+                           "logo":  "https://thumb.vtvdigital.org/transform?url=https://vtvgo-next-assets.vtvdigital.vn/prod/images/channel/20260905/2026090510/c725fae9ac-vtv3.webp",
+                           "thumbnail":  "https://thumb.vtvdigital.org/transform?url=https://vtvgo-next-assets.vtvdigital.vn/prod/images/channel/20260905/2026090510/3956c266d1-thumb-vtv3.webp",
+                           "pressedIndex":  3,
+                           "platforms":  8191,
+                           "allowCastPlatforms":  [
+                                                      2,
+                                                      4,
+                                                      5
+                                                  ],
+                           "catalogIds":  [
+                                              {
+                                                  "catalogId":  "6a95b9e9cc5bb9fa8eeac4db",
+                                                  "orderIndex":  "002000000003"
+                                              }
+                                          ],
+                           "namespaceIds":  [
+                                                "6a95b9e9cc5bb9fa8eeac4fd"
+                                            ],
+                           "mustLogin":  false,
+                           "p2pEnabled":  false,
+                           "catchUpToVodEnabled":  true,
+                           "showMaintenanceBanner":  false,
+                           "epgChannelId":  "EAV4PFR3C5",
+                           "catchUpTimeType":  "hour",
+                           "maxCatchUpTimeValue":  192,
+                           "defaultCatchUpTimeValue":  24,
+                           "catchUpDelayMinutes":  30,
+                           "startOverPlanIds":  [
+                                                    "premium",
+                                                    "premium-vtv",
+                                                    "worldcup",
+                                                    "combo",
+                                                    "VTVPrime-WC",
+                                                    "MBLIFE",
+                                                    "sctv-plus",
+                                                    "VTVPrime-VTVgoPlus",
+                                                    "OneVTV",
+                                                    "VHMHALONGXANH",
+                                                    "GreenSM",
+                                                    "VHMCanGio",
+                                                    "VHMHAIVANBAY",
+                                                    "sctv-plus-nb",
+                                                    "ABBank",
+                                                    "Vietcombank",
+                                                    "NCB",
+                                                    "VPBANK",
+                                                    "VinFast",
+                                                    "Petrolimex",
+                                                    "WorldcupMax",
+                                                    "test-dv"
+                                                ],
+                           "enabled":  true,
+                           "condition":  {
+                                             "visibility":  {
+                                                                "mode":  "manual",
+                                                                "enabled":  true
+                                                            }
+                                         }
+                       },
+                 "4":  {
+                           "id":  "4",
+                           "name":  "VTV4",
+                           "logo":  "https://thumb.vtvdigital.org/transform?url=https://vtvgo-next-assets.vtvdigital.vn/prod/images/channel/20260905/2026090510/c08cf70a49-vtv4.webp",
+                           "thumbnail":  "https://thumb.vtvdigital.org/transform?url=https://vtvgo-next-assets.vtvdigital.vn/prod/images/channel/20260905/2026090510/d389e6957c-thumb-vtv4.webp",
+                           "pressedIndex":  4,
+                           "platforms":  8191,
+                           "allowCastPlatforms":  [
+                                                      2,
+                                                      4,
+                                                      5
+                                                  ],
+                           "catalogIds":  [
+                                              {
+                                                  "catalogId":  "6a95b9e9cc5bb9fa8eeac4db",
+                                                  "orderIndex":  "002000000005"
+                                              }
+                                          ],
+                           "namespaceIds":  [
+                                                "6a95b9e9cc5bb9fa8eeac4fd"
+                                            ],
+                           "mustLogin":  false,
+                           "p2pEnabled":  false,
+                           "catchUpToVodEnabled":  true,
+                           "showMaintenanceBanner":  false,
+                           "epgChannelId":  "b3RQAH9Afa",
+                           "catchUpTimeType":  "hour",
+                           "maxCatchUpTimeValue":  192,
+                           "defaultCatchUpTimeValue":  24,
+                           "catchUpDelayMinutes":  30,
+                           "startOverPlanIds":  [
+                                                    "premium",
+                                                    "premium-vtv"
+                                                ],
+                           "enabled":  true,
+                           "condition":  {
+                                             "visibility":  {
+                                                                "mode":  "manual",
+                                                                "enabled":  true
+                                                            }
+                                         }
+                       },
+                 "5":  {
+                           "id":  "5",
+                           "name":  "VTV5",
+                           "logo":  "https://thumb.vtvdigital.org/transform?url=https://vtvgo-next-assets.vtvdigital.vn/prod/images/channel/20260905/2026090510/fdf2557ea9-vtv5.webp",
+                           "thumbnail":  "https://thumb.vtvdigital.org/transform?url=https://vtvgo-next-assets.vtvdigital.vn/prod/images/channel/20260905/2026090510/cab10a8d2e-thumb-vtv5.webp",
+                           "pressedIndex":  6,
+                           "platforms":  4095,
+                           "allowCastPlatforms":  [
+                                                      2,
+                                                      4,
+                                                      5
+                                                  ],
+                           "catalogIds":  [
+                                              {
+                                                  "catalogId":  "6a95b9e9cc5bb9fa8eeac4db",
+                                                  "orderIndex":  "002000000006"
+                                              }
+                                          ],
+                           "namespaceIds":  [
+                                                "6a95b9e9cc5bb9fa8eeac4fd"
+                                            ],
+                           "mustLogin":  false,
+                           "p2pEnabled":  false,
+                           "catchUpToVodEnabled":  true,
+                           "showMaintenanceBanner":  false,
+                           "epgChannelId":  "IdBV2PScnd",
+                           "catchUpTimeType":  "hour",
+                           "maxCatchUpTimeValue":  192,
+                           "defaultCatchUpTimeValue":  24,
+                           "catchUpDelayMinutes":  30,
+                           "startOverPlanIds":  [
+                                                    "premium",
+                                                    "premium-vtv"
+                                                ],
+                           "enabled":  true,
+                           "condition":  {
+                                             "visibility":  {
+                                                                "mode":  "manual",
+                                                                "enabled":  true
+                                                            }
+                                         }
+                       },
+                 "6":  {
+                           "id":  "6",
+                           "name":  "VTV10",
+                           "logo":  "https://thumb.vtvdigital.org/transform?url=https://vtvgo-next-assets.vtvdigital.vn/prod/images/channel/20260905/2026090510/13687e4caf-vtv10.webp",
+                           "thumbnail":  "https://thumb.vtvdigital.org/transform?url=https://vtvgo-next-assets.vtvdigital.vn/prod/images/channel/20260905/2026090518/e7a60819e5-thumb-vtv10.webp",
+                           "pressedIndex":  12,
+                           "platforms":  4095,
+                           "allowCastPlatforms":  [
+                                                      2,
+                                                      4,
+                                                      5
+                                                  ],
+                           "catalogIds":  [
+                                              {
+                                                  "catalogId":  "6a95b9e9cc5bb9fa8eeac4db",
+                                                  "orderIndex":  "002000000012"
+                                              }
+                                          ],
+                           "namespaceIds":  [
+                                                "6a95b9e9cc5bb9fa8eeac4fd"
+                                            ],
+                           "mustLogin":  false,
+                           "p2pEnabled":  false,
+                           "catchUpToVodEnabled":  true,
+                           "showMaintenanceBanner":  false,
+                           "epgChannelId":  "eyJpl2HANd",
+                           "catchUpTimeType":  "hour",
+                           "maxCatchUpTimeValue":  192,
+                           "defaultCatchUpTimeValue":  24,
+                           "catchUpDelayMinutes":  30,
+                           "startOverPlanIds":  [
+                                                    "premium",
+                                                    "premium-vtv",
+                                                    "worldcup",
+                                                    "combo",
+                                                    "VTVPrime-WC",
+                                                    "MBLIFE",
+                                                    "sctv-plus",
+                                                    "VTVPrime-VTVgoPlus",
+                                                    "OneVTV",
+                                                    "VHMHALONGXANH",
+                                                    "GreenSM",
+                                                    "VHMCanGio",
+                                                    "VHMHAIVANBAY",
+                                                    "sctv-plus-nb",
+                                                    "ABBank",
+                                                    "Vietcombank",
+                                                    "NCB",
+                                                    "VPBANK",
+                                                    "VinFast",
+                                                    "WorldcupMax"
+                                                ],
+                           "enabled":  true,
+                           "condition":  {
+                                             "visibility":  {
+                                                                "mode":  "manual",
+                                                                "enabled":  true
+                                                            }
+                                         }
+                       },
+                 "7":  {
+                           "id":  "7",
+                           "name":  "VTV5 Tây Nam Bộ",
+                           "logo":  "https://thumb.vtvdigital.org/transform?url=https://vtvgo-next-assets.vtvdigital.vn/prod/images/channel/20260905/2026090510/eeb81bb42b-vtv5-ta-y-nam-bo.webp",
+                           "thumbnail":  "https://thumb.vtvdigital.org/transform?url=https://vtvgo-next-assets.vtvdigital.vn/prod/images/channel/20260905/2026090510/f1fa7320f8-thumb-vtv5-t-y-nam-b.webp",
+                           "pressedIndex":  7,
+                           "platforms":  8191,
+                           "allowCastPlatforms":  [
+                                                      2,
+                                                      4,
+                                                      5
+                                                  ],
+                           "catalogIds":  [
+                                              {
+                                                  "catalogId":  "6a95b9e9cc5bb9fa8eeac4db",
+                                                  "orderIndex":  "002000000007"
+                                              }
+                                          ],
+                           "namespaceIds":  [
+                                                "6a95b9e9cc5bb9fa8eeac4fd"
+                                            ],
+                           "mustLogin":  false,
+                           "p2pEnabled":  false,
+                           "catchUpToVodEnabled":  true,
+                           "showMaintenanceBanner":  false,
+                           "epgChannelId":  "IlsQTbSpEH",
+                           "catchUpTimeType":  "hour",
+                           "maxCatchUpTimeValue":  192,
+                           "defaultCatchUpTimeValue":  24,
+                           "catchUpDelayMinutes":  30,
+                           "startOverPlanIds":  [
+                                                    "premium",
+                                                    "premium-vtv"
+                                                ],
+                           "enabled":  true,
+                           "condition":  {
+                                             "visibility":  {
+                                                                "mode":  "manual",
+                                                                "enabled":  true
+                                                            }
+                                         }
+                       }
+             }
+}

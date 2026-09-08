@@ -140,7 +140,43 @@ class PlayerViewModel(
             return
         }
 
-        // Determine the actual URL to play (non-THVL channels)
+        // For VTVGo channels without pre-resolved URL: fetch stream via API
+        if (channel.streamUrl.contains("vtvgo.vn") && channel.resolvedUrl == null) {
+            viewModelScope.launch {
+                try {
+                    // Extract channel ID from URL: antv-1,89.html -> 89, vtv1-1.html -> 1
+                    val channelId = Regex("""(?:-(\d+)\.html|,(\d+)\.html)""").find(channel.streamUrl)?.let {
+                        it.groupValues[1].ifEmpty { it.groupValues[2] }
+                    }
+                    if (channelId == null) {
+                        com.tvlaoto.util.AppLogger.w("Player", "Cannot extract channel ID from: ${channel.streamUrl}")
+                        _errorMessage.value = "Không thể xác định kênh."
+                        _isBuffering.value = false
+                        return@launch
+                    }
+                    com.tvlaoto.util.AppLogger.i("Player", "Fetching VTVGo live URL for channel $channelId (${channel.name})...")
+                    val liveUrl = repository.fetchVtvgoLiveUrl(channelId)
+                    if (liveUrl != null) {
+                        com.tvlaoto.util.AppLogger.i("Player", "VTVGo resolved: ${liveUrl.take(80)}...")
+                        val mediaSource = TvPlayerFactory.createMediaSource(channel.copy(streamUrl = liveUrl))
+                        player.setMediaSource(mediaSource)
+                        player.prepare()
+                        player.playWhenReady = true
+                    } else {
+                        com.tvlaoto.util.AppLogger.w("Player", "VTVGo API returned no stream for channel $channelId")
+                        _errorMessage.value = "Không thể tải luồng phát sóng."
+                        _isBuffering.value = false
+                    }
+                } catch (e: Exception) {
+                    com.tvlaoto.util.AppLogger.e("Player", "VTVGo play error", e)
+                    _errorMessage.value = e.localizedMessage ?: "Lỗi phát luồng VTVGo"
+                    _isBuffering.value = false
+                }
+            }
+            return
+        }
+
+        // Determine the actual URL to play (pre-resolved channels)
         val playUrl = channel.resolvedUrl ?: channel.streamUrl
 
         com.tvlaoto.util.AppLogger.d("Player", "Play URL: ${playUrl.take(80)}...")

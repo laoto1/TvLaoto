@@ -430,6 +430,66 @@ class ChannelRepository(
     }
 
     /**
+     * Fetch live stream URL from VTVGo playback API.
+     * Used for ALL VTVGo channels (VTV + regional) that don't have pre-resolved URLs.
+     */
+    suspend fun fetchVtvgoLiveUrl(channelId: String): String? = withContext(Dispatchers.IO) {
+        try {
+            val deviceId = java.util.UUID.randomUUID().toString()
+            val jsonBody = org.json.JSONObject().apply {
+                put("channelId", channelId)
+                put("platform", "webPC")
+                put("deviceId", deviceId)
+            }
+
+            val requestBody = jsonBody.toString()
+                .toByteArray(Charsets.UTF_8)
+                .let { okhttp3.RequestBody.create(null, it) }
+
+            val request = Request.Builder()
+                .url(VTVGO_PLAYBACK_API)
+                .post(requestBody)
+                .header("Content-Type", "application/json")
+                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
+                .header("Referer", "https://vtvgo.vn/")
+                .header("Origin", "https://vtvgo.vn")
+                .header("Accept", "application/json")
+                .build()
+
+            val response = httpClient.newCall(request).execute()
+            if (!response.isSuccessful) {
+                com.tvlaoto.util.AppLogger.w("ChannelRepo", "VTVGo live API: ${response.code}")
+                return@withContext null
+            }
+
+            val body = response.body?.string() ?: return@withContext null
+            val json = org.json.JSONObject(body)
+            val data = json.optJSONObject("data") ?: return@withContext null
+            val sourceModes = data.optJSONArray("sourceModes") ?: return@withContext null
+
+            for (i in 0 until sourceModes.length()) {
+                val mode = sourceModes.getJSONObject(i)
+                if (mode.optString("id") == "default") {
+                    val multiSource = mode.optJSONArray("multiSource") ?: continue
+                    if (multiSource.length() > 0) {
+                        val sources = multiSource.getJSONObject(0).optJSONArray("sources") ?: continue
+                        if (sources.length() > 0) {
+                            val url = sources.getJSONObject(0).optString("url", "")
+                            if (url.isNotEmpty()) {
+                                com.tvlaoto.util.AppLogger.i("ChannelRepo", "VTVGo live: ${url.take(80)}...")
+                                return@withContext url
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            com.tvlaoto.util.AppLogger.w("ChannelRepo", "VTVGo live error: ${e.message}")
+        }
+        null
+    }
+
+    /**
      * Fetch catchup stream URL from VTVGo playback API.
      * Pure HTTP — no WebView needed!
      */
