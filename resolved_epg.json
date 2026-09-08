@@ -1,5 +1,5 @@
 {
-  "timestamp": 1788842511,
+  "timestamp": 1788843273,
   "channels": {
     "vtv1": {
       "name": "VTV1 HD",
@@ -124,11 +124,11 @@
         },
         {
           "index": 13,
-          "time": "11:45",
+          "time": "11:44",
           "title": "Góc nhìn văn hóa",
-          "is_replayable": false,
-          "start_epoch": 1788842700,
-          "end_epoch": 1788843600,
+          "is_replayable": true,
+          "start_epoch": 1788842674,
+          "end_epoch": 1788843574,
           "catchup_url": null
         },
         {
@@ -986,16 +986,16 @@
           "title": "Gì thế nhỉ",
           "is_replayable": true,
           "start_epoch": 1788841833,
-          "end_epoch": 1788842673,
+          "end_epoch": 1788842973,
           "catchup_url": null
         },
         {
           "index": 20,
-          "time": "11:45",
+          "time": "11:49",
           "title": "Phụ nữ là số 1",
-          "is_replayable": false,
-          "start_epoch": 1788842700,
-          "end_epoch": 1788843600,
+          "is_replayable": true,
+          "start_epoch": 1788842999,
+          "end_epoch": 1788843599,
           "catchup_url": null
         },
         {
@@ -1361,16 +1361,16 @@
           "title": "Làng trong phố - Tập 10",
           "is_replayable": true,
           "start_epoch": 1788840899,
-          "end_epoch": 1788842699,
+          "end_epoch": 1788842519,
           "catchup_url": null
         },
         {
           "index": 14,
-          "time": "11:45",
+          "time": "11:42",
           "title": "Giai điệu cuộc sống: Chuyện lứa đôi",
-          "is_replayable": false,
-          "start_epoch": 1788842700,
-          "end_epoch": 1788843600,
+          "is_replayable": true,
+          "start_epoch": 1788842577,
+          "end_epoch": 1788843597,
           "catchup_url": null
         },
         {
@@ -1950,7 +1950,7 @@
           "index": 9,
           "time": "11:50",
           "title": "Bản tin thể thao",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1788843000,
           "end_epoch": 1788843600,
           "catchup_url": null
@@ -2307,7 +2307,7 @@
           "index": 10,
           "time": "11:50",
           "title": "Bản tin thể thao",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1788843000,
           "end_epoch": 1788843600,
           "catchup_url": null
@@ -2556,7 +2556,7 @@
           "index": 12,
           "time": "11:50",
           "title": "Bản tin thể thao",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1788843000,
           "end_epoch": 1788843300,
           "catchup_url": null
@@ -2565,7 +2565,7 @@
           "index": 13,
           "time": "11:55",
           "title": "Hành trình đất Việt",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1788843300,
           "end_epoch": 1788843600,
           "catchup_url": null
@@ -2886,7 +2886,7 @@
           "index": 7,
           "time": "11:45",
           "title": "VTV Sports News",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1788842700,
           "end_epoch": 1788843600,
           "catchup_url": null
@@ -3189,7 +3189,7 @@
           "index": 14,
           "time": "11:45",
           "title": "Trường Học Hạnh Phúc: Đừng để những đứa trẻ cô đơn - Tập 13",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1788842700,
           "end_epoch": 1788843600,
           "catchup_url": null
@@ -3618,7 +3618,7 @@
           "index": 10,
           "time": "11:45",
           "title": "24h Online",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1788842700,
           "end_epoch": 1788843900,
           "catchup_url": null
@@ -4038,7 +4038,7 @@
           "index": 17,
           "time": "11:50",
           "title": "Alo Doctor",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1788843000,
           "end_epoch": 1788843600,
           "catchup_url": null
