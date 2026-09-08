@@ -202,6 +202,54 @@ async def resolve_thvl(channel_url: str) -> str | None:
     return result_url
 
 
+async def resolve_tv360(channel_url: str) -> str | None:
+    """
+    TV360 channels — intercept m3u8 from netcdn.tv360.vn.
+    TV360 auto-plays on page load, no click needed.
+    """
+    if browser is None:
+        raise RuntimeError("Browser not initialized")
+
+    context = await browser.new_context(
+        user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        viewport={"width": 1280, "height": 720},
+    )
+
+    page = await context.new_page()
+    result_url: str | None = None
+    event = asyncio.Event()
+
+    async def handle_response(response):
+        nonlocal result_url
+        if result_url:
+            return
+        try:
+            url = response.url
+            # TV360 streams come from netcdn.tv360.vn
+            if "netcdn" in url and ".m3u8" in url and "index.m3u8" in url and response.ok:
+                result_url = url
+                event.set()
+                return
+        except Exception:
+            pass
+
+    page.on("response", handle_response)
+
+    try:
+        await page.goto(channel_url, wait_until="domcontentloaded", timeout=RESOLVE_TIMEOUT)
+        try:
+            await asyncio.wait_for(event.wait(), timeout=RESOLVE_TIMEOUT / 1000)
+        except asyncio.TimeoutError:
+            print(f"[Resolver] Timeout for TV360: {channel_url}")
+    except Exception as e:
+        print(f"[Resolver] TV360 error: {e}")
+    finally:
+        await page.close()
+        await context.close()
+
+    return result_url
+
+
 @app.get("/")
 async def root():
     return {
@@ -236,6 +284,8 @@ async def resolve_channel(channel: str, force: bool = False):
 
     if provider == "thvl":
         url = await resolve_thvl(ch["url"])
+    elif provider == "tv360":
+        url = await resolve_tv360(ch["url"])
     else:
         url = await resolve_vtvgo(ch["url"])
 
@@ -278,6 +328,8 @@ async def resolve_all(force: bool = False):
             provider = ch.get("provider", "vtvgo")
             if provider == "thvl":
                 url = await resolve_thvl(ch["url"])
+            elif provider == "tv360":
+                url = await resolve_tv360(ch["url"])
             else:
                 url = await resolve_vtvgo(ch["url"])
 
