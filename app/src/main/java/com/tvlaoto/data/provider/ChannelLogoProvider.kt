@@ -104,6 +104,9 @@ object ChannelLogoProvider {
             norm.contains("quảng ninh") -> R.drawable.logo_quangninh1
             norm.contains("quảng ngãi") -> R.drawable.logo_quangngai
             norm.contains("nam định") -> R.drawable.logo_namdinh
+            norm.contains("lạng sơn") -> R.drawable.logo_langson
+            norm.contains("cao bằng") -> R.drawable.logo_caobang
+            norm.contains("hà tĩnh") -> R.drawable.logo_hatinh
             else -> null
         }
     }
