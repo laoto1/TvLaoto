@@ -16,7 +16,12 @@ import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.InputStream
+import java.net.URLEncoder
+import java.security.MessageDigest
 import java.util.concurrent.TimeUnit
+import javax.crypto.Cipher
+import javax.crypto.spec.SecretKeySpec
+import android.util.Base64
 import com.tvlaoto.data.db.AppStateDao
 import com.tvlaoto.data.db.AppState
 
@@ -30,6 +35,14 @@ class ChannelRepository(
         const val RESOLVED_EPG_URL = "https://raw.githubusercontent.com/laoto1/TvLaoto/main/resolved_epg.json"
         const val VTVGO_EPG_API = "https://api.vtvdigital.org/display/v21.0/epg"
         const val VTVGO_PLAYBACK_API = "https://api.vtvdigital.org/live-channel/v21.0/playback/source"
+        const val TV360_GET_LINK_API = "https://tv360.vn/public/v1/composite/get-link"
+        const val TV360_AES_SECRET = "eNdtOeNDeNcRyPteDsCREt#2022"
+
+        // TV360 channel ID mapping: THVL name -> TV360 channel ID
+        val TV360_CHANNEL_MAP = mapOf(
+            "thvl1" to 25, "thvl2" to 26, "thvl3" to 219,
+            "thvl4" to 220, "thvl5" to 91
+        )
     }
 
     private val prefs: SharedPreferences =
@@ -468,6 +481,89 @@ class ChannelRepository(
             com.tvlaoto.util.AppLogger.w("ChannelRepo", "Catchup error: ${e.message}")
         }
         null
+    }
+
+    // ---- TV360 API (on-demand for THVL channels) ----
+
+    private fun tv360AesKey(): SecretKeySpec {
+        val sha1 = MessageDigest.getInstance("SHA-1").digest(TV360_AES_SECRET.toByteArray())
+        val hexStr = sha1.joinToString("") { "%02x".format(it) }
+        val keyHex = hexStr.substring(0, 32) // 32 hex chars = 16 bytes = AES-128
+        val keyBytes = keyHex.chunked(2).map { it.toInt(16).toByte() }.toByteArray()
+        return SecretKeySpec(keyBytes, "AES")
+    }
+
+    private fun tv360Encrypt(plaintext: String): String {
+        val cipher = Cipher.getInstance("AES/ECB/PKCS5Padding")
+        cipher.init(Cipher.ENCRYPT_MODE, tv360AesKey())
+        return Base64.encodeToString(cipher.doFinal(plaintext.toByteArray()), Base64.NO_WRAP)
+    }
+
+    private fun tv360Decrypt(ciphertext: String): String {
+        val cipher = Cipher.getInstance("AES/ECB/PKCS5Padding")
+        cipher.init(Cipher.DECRYPT_MODE, tv360AesKey())
+        return String(cipher.doFinal(Base64.decode(ciphertext, Base64.DEFAULT)))
+    }
+
+    /**
+     * Fetch live stream URL for THVL channel from TV360 API.
+     * @param channelKey e.g. "thvl1"
+     * @return m3u8 URL or null
+     */
+    suspend fun fetchTv360Url(channelKey: String): String? = withContext(Dispatchers.IO) {
+        val tv360Id = TV360_CHANNEL_MAP[channelKey.lowercase()] ?: return@withContext null
+        try {
+            val params = "id=$tv360Id"
+            val sq = URLEncoder.encode(tv360Encrypt(params), "UTF-8")
+            val url = "$TV360_GET_LINK_API?sq=$sq&secured=true"
+
+            val request = Request.Builder()
+                .url(url)
+                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
+                .header("Accept", "application/json")
+                .header("Referer", "https://tv360.vn/")
+                .build()
+
+            val response = httpClient.newCall(request).execute()
+            val body = response.body?.string() ?: return@withContext null
+
+            val json = org.json.JSONObject(body)
+            if (json.optInt("errorCode") != 200) {
+                com.tvlaoto.util.AppLogger.w("ChannelRepo", "TV360 error: ${json.optString("message")}")
+                return@withContext null
+            }
+
+            val encryptedData = json.optString("data", "")
+            if (encryptedData.isEmpty()) return@withContext null
+
+            val decrypted = tv360Decrypt(encryptedData)
+            com.tvlaoto.util.AppLogger.d("ChannelRepo", "TV360 decrypted: ${decrypted.take(150)}...")
+
+            // Decrypted data is a JSON string with linkPlay or url field
+            val dataJson = org.json.JSONObject(decrypted)
+            val linkPlay = dataJson.optString("url", "")
+                .ifEmpty { dataJson.optString("linkPlay", "") }
+                .ifEmpty { dataJson.optString("link_play", "") }
+
+            if (linkPlay.isNotEmpty()) {
+                com.tvlaoto.util.AppLogger.i("ChannelRepo", "TV360 URL: ${linkPlay.take(80)}...")
+                return@withContext linkPlay
+            }
+
+            // Try finding m3u8 URL in decrypted text
+            val m3u8Regex = Regex("""https?://[^\s"']+\.m3u8[^\s"']*""")
+            val match = m3u8Regex.find(decrypted)
+            if (match != null) {
+                com.tvlaoto.util.AppLogger.i("ChannelRepo", "TV360 m3u8: ${match.value.take(80)}...")
+                return@withContext match.value
+            }
+
+            com.tvlaoto.util.AppLogger.w("ChannelRepo", "TV360: no URL in decrypted data")
+            null
+        } catch (e: Exception) {
+            com.tvlaoto.util.AppLogger.e("ChannelRepo", "TV360 fetch error: ${e.message}", e)
+            null
+        }
     }
 }
 

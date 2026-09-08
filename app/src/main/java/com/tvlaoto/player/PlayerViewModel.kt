@@ -104,7 +104,38 @@ class PlayerViewModel(
             fetchEpg()
         }
 
-        // Determine the actual URL to play
+        // For THVL channels: fetch stream URL on-demand from TV360 API
+        val isTHVL = channel.id.lowercase().startsWith("thvl")
+        if (isTHVL) {
+            viewModelScope.launch {
+                try {
+                    com.tvlaoto.util.AppLogger.i("Player", "Fetching TV360 URL for ${channel.id}...")
+                    val tv360Url = repository.fetchTv360Url(channel.id)
+                    if (tv360Url != null) {
+                        com.tvlaoto.util.AppLogger.i("Player", "TV360 resolved: ${tv360Url.take(80)}...")
+                        val mediaSource = TvPlayerFactory.createMediaSource(channel.copy(streamUrl = tv360Url))
+                        player.setMediaSource(mediaSource)
+                        player.prepare()
+                        player.playWhenReady = true
+                    } else {
+                        // Fallback to resolved URL
+                        val fallbackUrl = channel.resolvedUrl ?: channel.streamUrl
+                        com.tvlaoto.util.AppLogger.w("Player", "TV360 API failed, using fallback: ${fallbackUrl.take(60)}...")
+                        val mediaSource = TvPlayerFactory.createMediaSource(channel.copy(streamUrl = fallbackUrl))
+                        player.setMediaSource(mediaSource)
+                        player.prepare()
+                        player.playWhenReady = true
+                    }
+                } catch (e: Exception) {
+                    com.tvlaoto.util.AppLogger.e("Player", "TV360 play error", e)
+                    _errorMessage.value = e.localizedMessage ?: "Lỗi phát luồng THVL"
+                    _isBuffering.value = false
+                }
+            }
+            return
+        }
+
+        // Determine the actual URL to play (non-THVL channels)
         val playUrl = channel.resolvedUrl ?: channel.streamUrl
 
         com.tvlaoto.util.AppLogger.d("Player", "Play URL: ${playUrl.take(80)}...")
