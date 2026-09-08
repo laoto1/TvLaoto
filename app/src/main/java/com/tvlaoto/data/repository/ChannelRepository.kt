@@ -36,6 +36,7 @@ class ChannelRepository(
         const val VTVGO_EPG_API = "https://api.vtvdigital.org/display/v21.0/epg"
         const val VTVGO_PLAYBACK_API = "https://api.vtvdigital.org/live-channel/v21.0/playback/source"
         const val TV360_GET_LINK_API = "https://tv360.vn/public/v1/composite/get-link"
+        const val TV360_SCHEDULE_API = "https://tv360.vn/public/v1/live/get-live-schedule"
         const val TV360_AES_SECRET = "eNdtOeNDeNcRyPteDsCREt#2022"
 
         // TV360 channel ID mapping: THVL name -> TV360 channel ID
@@ -577,6 +578,82 @@ class ChannelRepository(
             com.tvlaoto.util.AppLogger.e("ChannelRepo", "TV360 fetch error: ${e.message}", e)
             null
         }
+    }
+
+    /**
+     * Fetch EPG schedule for THVL channel from TV360 API.
+     * @param channelKey e.g. "thvl1"
+     */
+    suspend fun fetchTv360Epg(channelKey: String): List<com.tvlaoto.data.model.EpgProgram> = withContext(Dispatchers.IO) {
+        val tv360Id = TV360_CHANNEL_MAP[channelKey.lowercase()] ?: return@withContext emptyList()
+        val list = mutableListOf<com.tvlaoto.data.model.EpgProgram>()
+        try {
+            val url = "$TV360_SCHEDULE_API?id=$tv360Id"
+            val request = Request.Builder()
+                .url(url)
+                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
+                .header("Referer", "https://tv360.vn/")
+                .build()
+
+            val response = httpClient.newCall(request).execute()
+            if (!response.isSuccessful) return@withContext emptyList()
+
+            val body = response.body?.string() ?: return@withContext emptyList()
+            val json = org.json.JSONObject(body)
+            val dataObj = json.optJSONObject("data") ?: return@withContext emptyList()
+            val schedulesArr = dataObj.optJSONArray("schedules") ?: return@withContext emptyList()
+
+            val nowEpoch = System.currentTimeMillis() / 1000L
+
+            for (i in 0 until schedulesArr.length()) {
+                val item = schedulesArr.getJSONObject(i)
+                val id = item.optString("id", "")
+                val name = item.optString("name", "").trim()
+                val startTime = item.optString("startTime", "")
+                val epochSt = item.optLong("epochSt", 0L) / 1000L
+                val epochEt = item.optLong("epochEt", 0L) / 1000L
+
+                val isReplayable = epochEt > 0 && epochEt < nowEpoch
+
+                list.add(
+                    com.tvlaoto.data.model.EpgProgram(
+                        index = i,
+                        time = startTime,
+                        title = name,
+                        isReplayable = isReplayable,
+                        startEpoch = epochSt,
+                        endEpoch = epochEt,
+                        slotId = id
+                    )
+                )
+            }
+            com.tvlaoto.util.AppLogger.i("ChannelRepo", "Loaded TV360 EPG: ${list.size} programs for $channelKey")
+        } catch (e: Exception) {
+            com.tvlaoto.util.AppLogger.w("ChannelRepo", "TV360 EPG error for $channelKey: ${e.message}")
+        }
+        list
+    }
+
+    /**
+     * Fetch timeshift/catchup stream URL for THVL channel from TV360.
+     * Appends timeshift parameter to fresh TV360 stream URL.
+     */
+    suspend fun fetchTv360CatchupUrl(channelKey: String, program: com.tvlaoto.data.model.EpgProgram): String? = withContext(Dispatchers.IO) {
+        val baseStreamUrl = fetchTv360Url(channelKey) ?: return@withContext null
+        if (program.startEpoch <= 0) return@withContext baseStreamUrl
+
+        val nowEpoch = System.currentTimeMillis() / 1000L
+        val timeshiftSeconds = maxOf(0L, nowEpoch - program.startEpoch)
+
+        val catchupUrl = if (timeshiftSeconds > 0) {
+            val delimiter = if (baseStreamUrl.contains("?")) "&" else "?"
+            "$baseStreamUrl${delimiter}timeshift=$timeshiftSeconds"
+        } else {
+            baseStreamUrl
+        }
+
+        com.tvlaoto.util.AppLogger.i("ChannelRepo", "TV360 Catchup: timeshift=${timeshiftSeconds}s, url=${catchupUrl.take(80)}...")
+        catchupUrl
     }
 }
 
