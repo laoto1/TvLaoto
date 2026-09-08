@@ -151,14 +151,21 @@ async def resolve_tv360(browser, channel_url: str) -> str | None:
     result_url = None
     event = asyncio.Event()
 
+    def is_stream_url(url: str) -> bool:
+        """Match m3u8 from any TV360 CDN (netcdn, fo-hlc, ec02-pop3, bpk-tv, etc)."""
+        if ".m3u8" not in url:
+            return False
+        if "index.m3u8" in url and ("tv360" in url or "bpk-tv" in url or "netcdn" in url):
+            return True
+        return False
+
     async def handle_request(request):
         nonlocal result_url
         if result_url:
             return
         url = request.url
-        # Catch the m3u8 request going OUT (not response)
-        if ".m3u8" in url and ("netcdn" in url or "tv360" in url):
-            print(f"  [TV360] Intercepted request: {url[:120]}...", file=sys.stderr)
+        if is_stream_url(url):
+            print(f"  [TV360] Intercepted request: {url[:150]}", file=sys.stderr)
             result_url = url
             event.set()
 
@@ -168,8 +175,8 @@ async def resolve_tv360(browser, channel_url: str) -> str | None:
             return
         try:
             url = response.url
-            if ".m3u8" in url and ("netcdn" in url or "tv360" in url):
-                print(f"  [TV360] Intercepted response: {url[:120]}...", file=sys.stderr)
+            if is_stream_url(url):
+                print(f"  [TV360] Intercepted response: {url[:150]}", file=sys.stderr)
                 result_url = url
                 event.set()
         except Exception:
@@ -180,24 +187,11 @@ async def resolve_tv360(browser, channel_url: str) -> str | None:
 
     try:
         await page.goto(channel_url, wait_until="domcontentloaded", timeout=30_000)
-        # Wait for m3u8 to be intercepted (TV360 auto-plays)
+        # Wait for m3u8 to be intercepted (TV360 auto-plays after JS decryption)
         try:
-            await asyncio.wait_for(event.wait(), timeout=30)
+            await asyncio.wait_for(event.wait(), timeout=40)
         except asyncio.TimeoutError:
-            # Fallback: try extracting from video element src
-            try:
-                video_src = await page.evaluate("""() => {
-                    const v = document.querySelector('video');
-                    return v ? v.src : null;
-                }""")
-                if video_src and ".m3u8" in video_src:
-                    result_url = video_src
-                    print(f"  [TV360] Got from video.src: {video_src[:100]}...", file=sys.stderr)
-            except Exception:
-                pass
-
-            if not result_url:
-                print(f"  Timeout for TV360: {channel_url}", file=sys.stderr)
+            print(f"  Timeout for TV360: {channel_url}", file=sys.stderr)
     except Exception as e:
         print(f"  TV360 error: {e}", file=sys.stderr)
     finally:
