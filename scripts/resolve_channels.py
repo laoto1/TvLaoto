@@ -141,6 +141,46 @@ async def resolve_thvl(browser, channel_url: str) -> str | None:
     return result_url
 
 
+async def resolve_tv360(browser, channel_url: str) -> str | None:
+    """Resolve TV360 channel — intercept m3u8 from netcdn.tv360.vn."""
+    context = await browser.new_context(
+        user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        viewport={"width": 1280, "height": 720},
+    )
+    page = await context.new_page()
+    result_url = None
+    event = asyncio.Event()
+
+    async def handle_response(response):
+        nonlocal result_url
+        if result_url:
+            return
+        try:
+            url = response.url
+            # TV360 streams from netcdn.tv360.vn
+            if "netcdn" in url and ".m3u8" in url and "index.m3u8" in url and response.ok:
+                result_url = url
+                event.set()
+                return
+        except Exception:
+            pass
+
+    page.on("response", handle_response)
+
+    try:
+        await page.goto(channel_url, wait_until="domcontentloaded", timeout=RESOLVE_TIMEOUT)
+        await asyncio.wait_for(event.wait(), timeout=RESOLVE_TIMEOUT / 1000)
+    except asyncio.TimeoutError:
+        print(f"  Timeout for TV360", file=sys.stderr)
+    except Exception as e:
+        print(f"  TV360 error: {e}", file=sys.stderr)
+    finally:
+        await page.close()
+        await context.close()
+
+    return result_url
+
+
 async def main():
     channels = load_channels()
     results = {}
@@ -167,6 +207,8 @@ async def main():
             try:
                 if provider == "thvl":
                     url = await resolve_thvl(browser, ch["url"])
+                elif provider == "tv360":
+                    url = await resolve_tv360(browser, ch["url"])
                 else:
                     url = await resolve_vtvgo(browser, ch["url"])
 

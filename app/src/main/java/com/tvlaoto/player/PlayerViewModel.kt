@@ -68,6 +68,8 @@ class PlayerViewModel(
     private val _currentCatchupProgram = MutableStateFlow<EpgProgram?>(null)
     val currentCatchupProgram: StateFlow<EpgProgram?> = _currentCatchupProgram.asStateFlow()
 
+    private var tokenRetryCount = 0
+
     init {
         viewModelScope.launch {
                         repository.playlist.collect { playlist ->
@@ -87,6 +89,7 @@ class PlayerViewModel(
         _currentCatchupProgram.value = null
         _currentChannel.value = channel
         _errorMessage.value = null
+        tokenRetryCount = 0
         _isBuffering.value = true
         _epgList.value = emptyList()
         showOverlayTemporarily()
@@ -217,8 +220,9 @@ class PlayerViewModel(
                 _currentCatchupProgram.value = null
                 _isBuffering.value = false
                 return
-            } else {
-                // Re-fetch resolved playlist for fresh tokens
+            } else if (tokenRetryCount < 1) {
+                // Re-fetch resolved playlist for fresh tokens (max 1 retry)
+                tokenRetryCount++
                 _errorMessage.value = "Token hết hạn. Đang tải lại..."
                 viewModelScope.launch {
                     repository.refreshResolvedUrls()
@@ -226,9 +230,15 @@ class PlayerViewModel(
                     if (freshChannel != null && freshChannel.resolvedUrl != currentCh.resolvedUrl) {
                         playChannel(freshChannel)
                     } else {
-                        playChannel(currentCh)
+                        // Token unchanged — stop retrying
+                        _isBuffering.value = false
+                        _errorMessage.value = "Không thể phát kênh này. Token hết hạn."
                     }
                 }
+                return
+            } else {
+                _isBuffering.value = false
+                _errorMessage.value = "Không thể phát kênh này. Token hết hạn."
                 return
             }
         }
