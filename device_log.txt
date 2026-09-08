@@ -1,0 +1,36 @@
+============================================================
+=== AFlix TV Session Start ===
+=== 2026-09-08 12:27:39.047 ===
+=== Device: Samsung SM-S938U ===
+=== Android: 12 (SDK 32) ===
+=== ABI: x86_64, arm64-v8a, x86, armeabi-v7a, armeabi ===
+=== RAM: 192MB max ===
+============================================================
+[2026-09-08 12:27:39.065] I/AppLogger: Logger initialized: /storage/emulated/0/Android/data/com.tvlaoto.debug/files/logs/app_log.txt
+[2026-09-08 12:27:39.065] I/App: AFlix TV starting up
+[2026-09-08 12:27:41.200] I/ChannelRepo: Merged 11 resolved URLs
+[2026-09-08 12:27:43.087] I/Player: Playing: VTV1 HD (ch_1501669539_349825479)
+[2026-09-08 12:27:43.089] D/Player: Stream URL: https://vtvgo.vn/xem-truc-tuyen-kenh-vtv1-1.html
+[2026-09-08 12:27:43.096] D/Player: Play URL: https://vtvgoliveapp2-aws-qt.vtvdigital.vn/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9....
+[2026-09-08 12:27:43.106] D/Player: State: BUFFERING (channel=VTV1 HD)
+[2026-09-08 12:27:43.448] I/ChannelRepo: Loaded EPG for 11 channels
+[2026-09-08 12:27:47.856] D/Player: State: READY (channel=VTV1 HD)
+[2026-09-08 12:27:47.858] D/Player: isPlaying=true
+[2026-09-08 12:28:00.154] I/Player: Playing: VTV2 HD (ch_1501699330_349825479)
+[2026-09-08 12:28:00.157] D/Player: Stream URL: https://vtvgo.vn/xem-truc-tuyen-kenh-vtv2-2.html
+[2026-09-08 12:28:00.159] D/Player: Play URL: https://vtv-live-push-token.akamaized.net/hls/live/2029308/vtv2/playlist.m3u8?hd...
+[2026-09-08 12:28:00.167] D/Player: State: BUFFERING (channel=VTV2 HD)
+[2026-09-08 12:28:00.168] D/Player: isPlaying=false
+[2026-09-08 12:28:02.353] D/Player: State: READY (channel=VTV2 HD)
+[2026-09-08 12:28:02.355] D/Player: isPlaying=true
+[2026-09-08 12:28:06.312] I/Player: Playing: VTV3 HD (ch_1501729121_349825479)
+[2026-09-08 12:28:06.314] D/Player: Stream URL: https://vtvgo.vn/xem-truc-tuyen-kenh-vtv3-3.html
+[2026-09-08 12:28:06.315] D/Player: Play URL: https://vtvgoliveapp2-aws-qt.vtvdigital.vn/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9....
+[2026-09-08 12:28:06.325] D/Player: State: BUFFERING (channel=VTV3 HD)
+[2026-09-08 12:28:06.327] D/Player: isPlaying=false
+[2026-09-08 12:28:06.921] D/Player: State: READY (channel=VTV3 HD)
+[2026-09-08 12:28:06.925] D/Player: isPlaying=true
+[2026-09-08 12:28:10.892] D/Player: State: BUFFERING (channel=VTV3 HD)
+[2026-09-08 12:28:10.895] D/Player: isPlaying=false
+[2026-09-08 12:28:11.351] D/Player: State: READY (channel=VTV3 HD)
+[2026-09-08 12:28:11.355] D/Player: isPlaying=true

@@ -322,7 +322,10 @@ class ChannelRepository(
                             isReplayable = p.optBoolean("is_replayable", false),
                             startEpoch = p.optLong("start_epoch", 0),
                             endEpoch = p.optLong("end_epoch", 0),
-                            catchupUrl = p.optString("catchup_url", "").ifBlank { null }
+                            catchupUrl = p.optString("catchup_url", "").ifBlank { null },
+                            slotId = p.optString("slot_id", "").ifEmpty { p.optString("slotId", "") }.ifBlank { null },
+                            startTimeIso = p.optString("start_time_iso", "").ifEmpty { p.optString("startTime", "") }.ifBlank { null },
+                            endTimeIso = p.optString("end_time_iso", "").ifEmpty { p.optString("endTime", "") }.ifBlank { null }
                         )
                     )
                 }
@@ -372,8 +375,13 @@ class ChannelRepository(
             val channelArr = dataObj.optJSONArray(channelId) ?: return@withContext emptyList()
             if (channelArr.length() == 0) return@withContext emptyList()
 
-            val dayObj = channelArr.getJSONObject(0)
-            val programsArr = dayObj.optJSONArray("programs") ?: return@withContext emptyList()
+            // VTVGo API v21 returns array of programs directly: data: { "1": [ { slotId, title, ... }, ... ] }
+            val firstItem = channelArr.optJSONObject(0) ?: return@withContext emptyList()
+            val programsArr = if (firstItem.has("slotId") || firstItem.has("startTime")) {
+                channelArr
+            } else {
+                firstItem.optJSONArray("programs") ?: channelArr
+            }
 
             val isoSdf = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", java.util.Locale.US)
             isoSdf.timeZone = java.util.TimeZone.getTimeZone("UTC")

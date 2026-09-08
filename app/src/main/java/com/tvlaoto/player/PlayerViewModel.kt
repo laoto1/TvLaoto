@@ -99,10 +99,8 @@ class PlayerViewModel(
 
         repository.saveLastPlayedChannel(channel.id)
         
-        // Fetch EPG if channel has resolved URL (VTVGo/THVL)
-        if (channel.resolvedUrl != null) {
-            fetchEpg()
-        }
+        // Fetch EPG for channel
+        fetchEpg()
 
         // For THVL channels: fetch stream URL on-demand from TV360 API
         val thvlKey = when {
@@ -308,7 +306,6 @@ class PlayerViewModel(
 
     private fun fetchEpg() {
         val channel = _currentChannel.value ?: return
-        if (channel.resolvedUrl == null) return
         
         if (epgCache.containsKey(channel.id)) {
             _epgList.value = epgCache[channel.id]!!
@@ -317,11 +314,14 @@ class PlayerViewModel(
         
         viewModelScope.launch {
             _isEpgLoading.value = true
-            // Try server EPG first, fallback to direct API
-            var list = repository.fetchServerEpg(channel.name)
-            if (list.isEmpty()) {
-                com.tvlaoto.util.AppLogger.d("Player", "Server EPG empty, trying VTVGo API...")
+            // For VTV channels: fetch live EPG with slotId directly from VTVGo API v21
+            var list: List<EpgProgram> = emptyList()
+            if (channel.streamUrl.contains("vtvgo.vn")) {
                 list = repository.fetchEpgFromApi(channel.streamUrl)
+            }
+            if (list.isEmpty()) {
+                com.tvlaoto.util.AppLogger.d("Player", "Direct EPG empty, trying server EPG for ${channel.name}...")
+                list = repository.fetchServerEpg(channel.name)
             }
             if (list.isNotEmpty()) {
                 epgCache[channel.id] = list
@@ -333,29 +333,33 @@ class PlayerViewModel(
 
     fun playCatchup(program: EpgProgram) {
         val channel = _currentChannel.value ?: return
-        if (channel.resolvedUrl == null) return
         
         hideEpgPanel()
         _currentCatchupProgram.value = program
         _isBuffering.value = true
 
         viewModelScope.launch {
-            // Extract VTVGo channel ID from stream URL
-            val channelId = Regex("(?:-(\\d+)\\.html|,(\\d+)\\.html)").find(channel.streamUrl)?.let {
-                it.groupValues[1].ifEmpty { it.groupValues[2] }
+            // If program already has catchupUrl pre-resolved, use it
+            var catchupUrl = program.catchupUrl
+
+            if (catchupUrl == null) {
+                // Extract VTVGo channel ID from stream URL
+                val channelId = Regex("""(?:-(\d+)\.html|,(\d+)\.html)""").find(channel.streamUrl)?.let {
+                    it.groupValues[1].ifEmpty { it.groupValues[2] }
+                }
+
+                if (channelId == null || program.slotId == null) {
+                    _errorMessage.value = "Kênh này chưa hỗ trợ xem lại."
+                    _isBuffering.value = false
+                    _currentCatchupProgram.value = null
+                    return@launch
+                }
+
+                com.tvlaoto.util.AppLogger.i("Player", "Fetching catchup: ${program.title} (slotId=${program.slotId})")
+
+                // Fetch catchup URL on-demand from VTVGo API
+                catchupUrl = repository.fetchCatchupUrl(channelId, program)
             }
-
-            if (channelId == null || program.slotId == null) {
-                _errorMessage.value = "Chương trình này không hỗ trợ xem lại."
-                _isBuffering.value = false
-                _currentCatchupProgram.value = null
-                return@launch
-            }
-
-            com.tvlaoto.util.AppLogger.i("Player", "Fetching catchup: ${program.title}")
-
-            // Fetch catchup URL on-demand from VTVGo API
-            val catchupUrl = repository.fetchCatchupUrl(channelId, program)
 
             if (catchupUrl != null) {
                 com.tvlaoto.util.AppLogger.i("Player", "Playing catchup: ${catchupUrl.take(80)}...")
