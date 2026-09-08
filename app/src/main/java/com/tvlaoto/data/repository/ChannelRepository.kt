@@ -91,6 +91,7 @@ class ChannelRepository(
         fun isValid(): Boolean = System.currentTimeMillis() < expireTime
     }
     private val tv360UrlCache = java.util.concurrent.ConcurrentHashMap<Int, CachedStreamUrl>()
+    private val tv360CatchupCache = java.util.concurrent.ConcurrentHashMap<String, CachedStreamUrl>()
     // CDN token valid ~3 hours; use 2.5h safety margin
     private val TV360_CACHE_TTL_MS = 2L * 3600 * 1000 + 30 * 60 * 1000 // 2h30m
 
@@ -624,17 +625,19 @@ class ChannelRepository(
         private set
 
     /**
-     * Fetch live stream URL from TV360 API.
+     * Fetch stream URL from TV360 API.
+     * @param childId optional schedule program ID (for VOD/catchup programs)
      * Returns: streaming URL, or null on failure (check lastTv360Error for details).
      * On 428 (device limit): parses active device list and sets descriptive error.
      */
-    private fun doFetchTv360(tv360Id: Int, isMovie: Boolean): String? {
+    private fun doFetchTv360(tv360Id: Int, isMovie: Boolean, childId: String? = null): String? {
         try {
             val timestamp = System.currentTimeMillis() / 1000
             val deviceId = TV360_DEVICE_ID
             val price = if (isMovie) 5000 else 0
             val groupChannel = if (isMovie) 1 else 0
-            val params = "id=$tv360Id&type=live&mod=LIVE&t=$timestamp&secured=true&drm=3%2C4&price=$price&subInfo=3&llc=1&groupChannel=$groupChannel"
+            val childParam = if (!childId.isNullOrEmpty()) "&childId=$childId" else ""
+            val params = "id=$tv360Id$childParam&type=live&mod=LIVE&t=$timestamp&secured=true&drm=3%2C4&price=$price&subInfo=3&llc=1&groupChannel=$groupChannel"
             val sq = URLEncoder.encode(tv360Encrypt(params), "UTF-8")
             val url = "$TV360_GET_LINK_API?sq=$sq&secured=true"
 
@@ -656,7 +659,7 @@ class ChannelRepository(
             lastTv360ErrorCode = code
             if (code != 200) {
                 val rawMsg = json.optString("message", "")
-                com.tvlaoto.util.AppLogger.w("ChannelRepo", "TV360 error ($code) for $tv360Id (isMovie=$isMovie): $rawMsg")
+                com.tvlaoto.util.AppLogger.w("ChannelRepo", "TV360 error ($code) for $tv360Id (isMovie=$isMovie, childId=$childId): $rawMsg")
 
                 if (code == 428) {
                     // Parse encrypted device data to get active device list
@@ -711,8 +714,13 @@ class ChannelRepository(
                 com.tvlaoto.util.AppLogger.i("ChannelRepo", "TV360 URL: ${linkPlay.take(80)}...")
                 lastTv360Error = null
                 // Cache the CDN URL — valid ~3h, no device checks on CDN
-                tv360UrlCache[tv360Id] = CachedStreamUrl(linkPlay, System.currentTimeMillis() + TV360_CACHE_TTL_MS)
-                com.tvlaoto.util.AppLogger.i("ChannelRepo", "TV360 cached URL for channel $tv360Id (expires in 2.5h)")
+                if (childId.isNullOrEmpty()) {
+                    tv360UrlCache[tv360Id] = CachedStreamUrl(linkPlay, System.currentTimeMillis() + TV360_CACHE_TTL_MS)
+                    com.tvlaoto.util.AppLogger.i("ChannelRepo", "TV360 cached live URL for channel $tv360Id (expires in 2.5h)")
+                } else {
+                    tv360CatchupCache["$tv360Id-$childId"] = CachedStreamUrl(linkPlay, System.currentTimeMillis() + TV360_CACHE_TTL_MS)
+                    com.tvlaoto.util.AppLogger.i("ChannelRepo", "TV360 cached catchup URL for $tv360Id-$childId (expires in 2.5h)")
+                }
                 return linkPlay
             }
 
@@ -721,6 +729,11 @@ class ChannelRepository(
             if (match != null) {
                 com.tvlaoto.util.AppLogger.i("ChannelRepo", "TV360 stream: ${match.value.take(80)}...")
                 lastTv360Error = null
+                if (childId.isNullOrEmpty()) {
+                    tv360UrlCache[tv360Id] = CachedStreamUrl(match.value, System.currentTimeMillis() + TV360_CACHE_TTL_MS)
+                } else {
+                    tv360CatchupCache["$tv360Id-$childId"] = CachedStreamUrl(match.value, System.currentTimeMillis() + TV360_CACHE_TTL_MS)
+                }
                 return match.value
             }
 
@@ -869,10 +882,40 @@ class ChannelRepository(
     }
 
     /**
-     * Fetch timeshift/catchup stream URL for THVL channel from TV360.
-     * Appends timeshift parameter to fresh TV360 stream URL.
+     * Fetch timeshift/catchup stream URL for TV360 channels.
+     * Uses program.slotId (childId) to fetch the exact program stream without device limits.
+     * Falls back to timeshift parameter on live stream if childId is unavailable.
      */
     suspend fun fetchTv360CatchupUrl(channelKey: String, program: com.tvlaoto.data.model.EpgProgram): String? = withContext(Dispatchers.IO) {
+        val tv360Id = TV360_CHANNEL_MAP[channelKey.lowercase()] ?: channelKey.toIntOrNull() ?: return@withContext null
+        val isMovie = tv360Id in setOf(9903, 10009, 10010, 10011, 10012, 10013, 10055) || tv360Id >= 10000
+        val childId = program.slotId?.trim()?.ifEmpty { null }
+
+        // 1. If we have a slotId (childId in TV360), fetch the specific program URL (VOD/Catchup)
+        // This does NOT trigger TV360 428 device limit and returns the exact video file!
+        if (!childId.isNullOrEmpty()) {
+            val cacheKey = "$tv360Id-$childId"
+            val cached = tv360CatchupCache[cacheKey]
+            if (cached != null && cached.isValid()) {
+                com.tvlaoto.util.AppLogger.i("ChannelRepo", "TV360 catchup cache HIT for $cacheKey")
+                lastTv360Error = null
+                return@withContext cached.url
+            }
+
+            var catchupUrl = doFetchTv360(tv360Id, isMovie = isMovie, childId = childId)
+            // Auto-retry on S-006 with alternate parameters
+            if (catchupUrl == null && (lastTv360Error?.contains("không hợp lệ") == true || lastTv360Error?.contains("S-006") == true)) {
+                com.tvlaoto.util.AppLogger.i("ChannelRepo", "Retrying TV360 catchup for $tv360Id (childId=$childId) with alternate parameters...")
+                catchupUrl = doFetchTv360(tv360Id, isMovie = !isMovie, childId = childId)
+            }
+
+            if (!catchupUrl.isNullOrEmpty()) {
+                com.tvlaoto.util.AppLogger.i("ChannelRepo", "TV360 Catchup resolved with childId $childId: ${catchupUrl.take(80)}...")
+                return@withContext catchupUrl
+            }
+        }
+
+        // 2. Fallback to timeshift on live stream if childId wasn't present or failed
         val baseStreamUrl = fetchTv360Url(channelKey) ?: return@withContext null
         if (program.startEpoch <= 0) return@withContext baseStreamUrl
 
@@ -886,7 +929,7 @@ class ChannelRepository(
             baseStreamUrl
         }
 
-        com.tvlaoto.util.AppLogger.i("ChannelRepo", "TV360 Catchup: timeshift=${timeshiftSeconds}s, url=${catchupUrl.take(80)}...")
+        com.tvlaoto.util.AppLogger.i("ChannelRepo", "TV360 Catchup (timeshift fallback): timeshift=${timeshiftSeconds}s, url=${catchupUrl.take(80)}...")
         catchupUrl
     }
 }
