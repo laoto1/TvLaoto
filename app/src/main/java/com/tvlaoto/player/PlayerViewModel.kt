@@ -424,7 +424,7 @@ class PlayerViewModel(
                     it.groupValues[1].ifEmpty { it.groupValues[2] }
                 }
 
-                if (channelId == null || program.slotId == null) {
+                if (channelId == null || program.slotId == null || !ChannelRepository.VTV_CATCHUP_CHANNEL_IDS.contains(channelId)) {
                     _errorMessage.value = "Kênh này chưa hỗ trợ xem lại."
                     _isBuffering.value = false
                     _currentCatchupProgram.value = null

@@ -26,12 +26,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Replay
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import com.tvlaoto.data.model.supportsCatchup
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -143,18 +145,19 @@ fun ProgramInfoPanel(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // 1. Replay
-            if (channel.resolvedUrl != null || channel.streamUrl.contains("tv360.vn") || channel.streamUrl.contains("vtvgo.vn")) {
-                EpgActionButton(
-                    title = stringResource(R.string.replay),
-                    icon = Icons.Default.Replay,
-                    backgroundBrush = Brush.horizontalGradient(
-                        colors = listOf(Color(0xFF6366F1), Color(0xFF8B5CF6))
-                    ),
-                    borderColor = Color.Transparent,
-                    onClick = onReplayClick
-                )
-            }
+            // 1. Replay / EPG Schedule
+            val hasCatchup = channel.supportsCatchup()
+            EpgActionButton(
+                title = if (hasCatchup) stringResource(R.string.replay) else stringResource(R.string.epg_schedule),
+                icon = if (hasCatchup) Icons.Default.Replay else Icons.Default.CalendarMonth,
+                backgroundBrush = if (hasCatchup) Brush.horizontalGradient(
+                    colors = listOf(Color(0xFF6366F1), Color(0xFF8B5CF6))
+                ) else Brush.horizontalGradient(
+                    colors = listOf(Color(0xFF0284C7), Color(0xFF0EA5E9))
+                ),
+                borderColor = Color.Transparent,
+                onClick = onReplayClick
+            )
 
             // 2. Favorite
             AnimatedContent(

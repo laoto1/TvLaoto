@@ -44,6 +44,9 @@ class ChannelRepository(
             "thvl1" to 25, "thvl2" to 26, "thvl3" to 219,
             "thvl4" to 220, "thvl5" to 91
         )
+
+        // Only VTV channels have catchup/timeshift servers on VTVGo (others return 404 CHANNEL_SOURCE_EMPTY)
+        val VTV_CATCHUP_CHANNEL_IDS = setOf("1", "2", "3", "4", "5", "6", "7", "13", "27", "36", "39", "163")
     }
 
     private val prefs: SharedPreferences =
@@ -416,9 +419,10 @@ class ChannelRepository(
                     try { endEpoch = isoSdf.parse(endIso)?.time?.div(1000) ?: 0L } catch (_: Exception) {}
                 }
 
+                val supportsCatchup = VTV_CATCHUP_CHANNEL_IDS.contains(channelId)
                 list.add(com.tvlaoto.data.model.EpgProgram(
                     index = i, time = timeStr, title = title,
-                    isReplayable = endEpoch > 0 && endEpoch < nowEpoch,
+                    isReplayable = supportsCatchup && endEpoch > 0 && endEpoch < nowEpoch,
                     startEpoch = startEpoch, endEpoch = endEpoch,
                     slotId = slotId, startTimeIso = startIso, endTimeIso = endIso
                 ))

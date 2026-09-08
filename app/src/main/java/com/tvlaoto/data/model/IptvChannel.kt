@@ -21,3 +21,17 @@ data class IptvChannel(
     val resolvedUrl: String? = null,   // Pre-resolved m3u8 URL with token
     val resolvedAt: Long = 0           // Unix timestamp when resolved
 )
+
+fun IptvChannel.supportsCatchup(): Boolean {
+    if (resolvedUrl != null) return true
+    if (streamUrl.contains("tv360.vn") || name.contains("THVL", ignoreCase = true) || groupTitle.equals("THVL", ignoreCase = true)) return true
+    if (streamUrl.contains("vtvgo.vn")) {
+        val channelId = Regex("""(?:-(\d+)\.html|,(\d+)\.html)""").find(streamUrl)?.let {
+            it.groupValues[1].ifEmpty { it.groupValues[2] }
+        }
+        return channelId in com.tvlaoto.data.repository.ChannelRepository.VTV_CATCHUP_CHANNEL_IDS ||
+                name.startsWith("VTV", ignoreCase = true) || groupTitle.equals("VTV", ignoreCase = true)
+    }
+    return false
+}
+
