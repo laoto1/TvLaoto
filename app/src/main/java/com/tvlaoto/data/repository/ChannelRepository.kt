@@ -13,8 +13,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.InputStream
 import java.net.URLEncoder
 import java.security.MessageDigest
@@ -50,6 +52,14 @@ class ChannelRepository(
 
         // Only VTV channels have catchup/timeshift servers on VTVGo (others return 404 CHANNEL_SOURCE_EMPTY)
         val VTV_CATCHUP_CHANNEL_IDS = setOf("1", "2", "3", "4", "5", "6", "7", "13", "27", "36", "39", "163")
+
+        // Pre-signed TV360 device cookies (valid 30 days, ensures server uses stable deviceId instead of generating random UUIDs per request)
+        const val TV360_SIGNED_DEVICE_COOKIE =
+            "device-id=s%3Aweb_9bb25a58-b0e9-4273-b207-8b818e3f5e9a.T7YbN7ZkfDjKfM2ZQmCmqVDZUizxVhlxe3%2FdszsByQQ; " +
+            "shared-device-id=web_9bb25a58-b0e9-4273-b207-8b818e3f5e9a; " +
+            "embed-device-id=s%3Aweb_9bb25a58-b0e9-4273-b207-8b818e3f5e9a.T7YbN7ZkfDjKfM2ZQmCmqVDZUizxVhlxe3%2FdszsByQQ; " +
+            "screen-size=s%3A1920x1080.uvjE9gczJ2ZmC0QdUMXaK%2BHUczLAtNpMQ1h3t%2Fq6m3Q; " +
+            "nd13=161258599_1; NEXT_LOCALE=vi"
     }
 
     private val prefs: SharedPreferences =
@@ -74,6 +84,10 @@ class ChannelRepository(
     val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
 
     var lastTv360Error: String? = null
+        private set
+
+    @Volatile
+    var tv360CookieHeader: String = TV360_SIGNED_DEVICE_COOKIE
         private set
 
     private val tv360SessionId: String = java.util.UUID.randomUUID().toString()
@@ -103,6 +117,41 @@ class ChannelRepository(
         )
     }
 
+    /**
+     * Refresh TV360 signed session cookies via /api/ping to keep device ID stable.
+     */
+    suspend fun refreshTv360Cookies() = withContext(Dispatchers.IO) {
+        try {
+            val jsonBody = """{"deviceInfo":{"deviceId":"$TV360_DEVICE_ID","screenSize":"1920x1080"}}"""
+            val request = Request.Builder()
+                .url("https://tv360.vn/api/ping")
+                .header("Content-Type", "application/json")
+                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
+                .post(jsonBody.toRequestBody("application/json".toMediaType()))
+                .build()
+
+            val response = httpClient.newCall(request).execute()
+            val setCookies = response.headers("Set-Cookie")
+            if (setCookies.isNotEmpty()) {
+                val cookieMap = mutableMapOf<String, String>()
+                for (sc in setCookies) {
+                    val cookiePair = sc.substringBefore(";")
+                    val key = cookiePair.substringBefore("=").trim()
+                    val value = cookiePair.substringAfter("=").trim()
+                    if (key.isNotEmpty() && value.isNotEmpty()) {
+                        cookieMap[key] = value
+                    }
+                }
+                cookieMap["nd13"] = "${TV360_USER_ID}_1"
+                cookieMap["NEXT_LOCALE"] = "vi"
+                tv360CookieHeader = cookieMap.entries.joinToString("; ") { "${it.key}=${it.value}" }
+                com.tvlaoto.util.AppLogger.i("ChannelRepo", "TV360 signed cookies refreshed successfully")
+            }
+        } catch (e: Exception) {
+            com.tvlaoto.util.AppLogger.w("ChannelRepo", "TV360 cookie refresh fallback: ${e.message}")
+        }
+    }
+
     suspend fun initialize() {
         val customUrl = _settings.value.customM3uUrl
         if (customUrl.isNotBlank()) {
@@ -110,8 +159,12 @@ class ChannelRepository(
         } else {
             loadBundledDemoPlaylist()
         }
-        // Note: movie channel URLs are cached lazily on first access.
-        // CDN URLs are valid ~3h so subsequent switches/catchup use cache (no device limit).
+        // Refresh TV360 signed session cookies to ensure stable single device session
+        try {
+            refreshTv360Cookies()
+        } catch (e: Exception) {
+            com.tvlaoto.util.AppLogger.w("ChannelRepo", "Init cookie refresh failed: ${e.message}")
+        }
     }
 
     suspend fun loadBundledDemoPlaylist() = withContext(Dispatchers.IO) {
@@ -648,7 +701,7 @@ class ChannelRepository(
                 .header("Content-Type", "application/json")
                 .header("Referer", "https://tv360.vn/")
                 .header("authorization", "Bearer $TV360_AUTH_TOKEN")
-                .header("Cookie", "device-id=$deviceId; shared-device-id=$deviceId; nd13=${TV360_USER_ID}_1; NEXT_LOCALE=vi; session-id=$tv360SessionId")
+                .header("Cookie", tv360CookieHeader)
                 .build()
 
             val response = httpClient.newCall(request).execute()
@@ -768,9 +821,9 @@ class ChannelRepository(
             url = doFetchTv360(tv360Id, !isMovie)
         }
 
-        // Auto-retry on 428 (device limit) — try cached URL from another channel as fallback
+        // Auto-retry on 428 (device limit) — try cached URL or tà đạo EPG program fallback
         if (url == null && lastTv360ErrorCode == 428) {
-            // First: if we have ANY valid cached URL for this channel, use it even if slightly old
+            // 1. If we have ANY valid cached URL for this channel, use it
             val anyCached = tv360UrlCache[tv360Id]
             if (anyCached != null) {
                 com.tvlaoto.util.AppLogger.i("ChannelRepo", "TV360 428 fallback: using cached URL for $tv360Id")
@@ -778,10 +831,33 @@ class ChannelRepository(
                 return@withContext anyCached.url
             }
 
-            // Otherwise retry with delay
+            // 2. Tà đạo fallback: nếu là kênh phim và live bị 428, phát tập phim gần nhất trong EPG
+            // (vì gọi với childId KHÔNG bị TV360 chặn 428 device limit!)
+            if (isMovie) {
+                try {
+                    com.tvlaoto.util.AppLogger.i("ChannelRepo", "TV360 428 on live: executing tà đạo fallback to recent EPG program for $tv360Id...")
+                    val epgList = fetchTv360Epg(channelKey)
+                    val recentProgram = epgList.filter { it.isReplayable && !it.slotId.isNullOrEmpty() }
+                        .maxByOrNull { it.startEpoch }
+                    if (recentProgram != null) {
+                        val fallbackUrl = doFetchTv360(tv360Id, isMovie = isMovie, childId = recentProgram.slotId)
+                        if (!fallbackUrl.isNullOrEmpty()) {
+                            com.tvlaoto.util.AppLogger.i("ChannelRepo", "TV360 428 bypassed via recent program ${recentProgram.title}!")
+                            lastTv360Error = null
+                            lastTv360ErrorCode = 200
+                            tv360UrlCache[tv360Id] = CachedStreamUrl(fallbackUrl, System.currentTimeMillis() + TV360_CACHE_TTL_MS)
+                            return@withContext fallbackUrl
+                        }
+                    }
+                } catch (e: Exception) {
+                    com.tvlaoto.util.AppLogger.w("ChannelRepo", "TV360 428 tà đạo fallback error: ${e.message}")
+                }
+            }
+
+            // 3. Otherwise retry with delay
             for (attempt in 1..2) {
-                com.tvlaoto.util.AppLogger.i("ChannelRepo", "TV360 device limit retry $attempt/2 for $tv360Id (waiting 5s)...")
-                Thread.sleep(5000)
+                com.tvlaoto.util.AppLogger.i("ChannelRepo", "TV360 device limit retry $attempt/2 for $tv360Id (waiting 3s)...")
+                Thread.sleep(3000)
                 url = doFetchTv360(tv360Id, isMovie)
                 if (url != null || lastTv360ErrorCode != 428) break
             }
@@ -838,7 +914,7 @@ class ChannelRepository(
                 .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
                 .header("Referer", "https://tv360.vn/")
                 .header("authorization", "Bearer $TV360_AUTH_TOKEN")
-                .header("Cookie", "device-id=$TV360_DEVICE_ID; shared-device-id=$TV360_DEVICE_ID; nd13=${TV360_USER_ID}_1; NEXT_LOCALE=vi")
+                .header("Cookie", tv360CookieHeader)
                 .build()
 
             val response = httpClient.newCall(request).execute()
