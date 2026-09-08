@@ -157,21 +157,41 @@ async def resolve_tv360(browser, channel_url: str) -> str | None:
             return
         try:
             url = response.url
-            # TV360 streams from netcdn.tv360.vn
-            if "netcdn" in url and ".m3u8" in url and "index.m3u8" in url and response.ok:
+
+            # Method 1: Direct m3u8 from netcdn CDN
+            if ".m3u8" in url and ("netcdn" in url or "tv360" in url) and response.ok:
+                print(f"  [TV360] Found m3u8: {url[:100]}...", file=sys.stderr)
                 result_url = url
                 event.set()
                 return
+
+            # Method 2: Parse encrypted API response for m3u8 URLs
+            content_type = response.headers.get("content-type", "")
+            if "json" in content_type or "mpegurl" in content_type:
+                try:
+                    body = await response.text()
+                    matches = re.findall(r'https?://[^\s"\']+\.m3u8[^\s"\']*', body)
+                    for m in matches:
+                        if "netcdn" in m or "tv360" in m:
+                            print(f"  [TV360] Found m3u8 in body: {m[:100]}...", file=sys.stderr)
+                            result_url = m
+                            event.set()
+                            return
+                except Exception:
+                    pass
         except Exception:
             pass
 
     page.on("response", handle_response)
 
     try:
-        await page.goto(channel_url, wait_until="domcontentloaded", timeout=RESOLVE_TIMEOUT)
-        await asyncio.wait_for(event.wait(), timeout=RESOLVE_TIMEOUT / 1000)
+        await page.goto(channel_url, wait_until="networkidle", timeout=45_000)
+        # Wait extra time for JS to decrypt API response and start playback
+        if not result_url:
+            await asyncio.sleep(5)
+        await asyncio.wait_for(event.wait(), timeout=15)
     except asyncio.TimeoutError:
-        print(f"  Timeout for TV360", file=sys.stderr)
+        print(f"  Timeout for TV360: {channel_url}", file=sys.stderr)
     except Exception as e:
         print(f"  TV360 error: {e}", file=sys.stderr)
     finally:

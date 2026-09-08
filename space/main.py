@@ -203,10 +203,7 @@ async def resolve_thvl(channel_url: str) -> str | None:
 
 
 async def resolve_tv360(channel_url: str) -> str | None:
-    """
-    TV360 channels — intercept m3u8 from netcdn.tv360.vn.
-    TV360 auto-plays on page load, no click needed.
-    """
+    """TV360 channels — intercept m3u8 from netcdn.tv360.vn."""
     if browser is None:
         raise RuntimeError("Browser not initialized")
 
@@ -225,20 +222,34 @@ async def resolve_tv360(channel_url: str) -> str | None:
             return
         try:
             url = response.url
-            # TV360 streams come from netcdn.tv360.vn
-            if "netcdn" in url and ".m3u8" in url and "index.m3u8" in url and response.ok:
+            if ".m3u8" in url and ("netcdn" in url or "tv360" in url) and response.ok:
                 result_url = url
                 event.set()
                 return
+
+            content_type = response.headers.get("content-type", "")
+            if "json" in content_type or "mpegurl" in content_type:
+                try:
+                    body = await response.text()
+                    matches = re.findall(r'https?://[^\s"\']+\.m3u8[^\s"\']*', body)
+                    for m in matches:
+                        if "netcdn" in m or "tv360" in m:
+                            result_url = m
+                            event.set()
+                            return
+                except Exception:
+                    pass
         except Exception:
             pass
 
     page.on("response", handle_response)
 
     try:
-        await page.goto(channel_url, wait_until="domcontentloaded", timeout=RESOLVE_TIMEOUT)
+        await page.goto(channel_url, wait_until="networkidle", timeout=45_000)
+        if not result_url:
+            await asyncio.sleep(5)
         try:
-            await asyncio.wait_for(event.wait(), timeout=RESOLVE_TIMEOUT / 1000)
+            await asyncio.wait_for(event.wait(), timeout=15)
         except asyncio.TimeoutError:
             print(f"[Resolver] Timeout for TV360: {channel_url}")
     except Exception as e:
