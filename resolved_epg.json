@@ -1,5 +1,5 @@
 {
-  "timestamp": 1788841185,
+  "timestamp": 1788841930,
   "channels": {
     "vtv1": {
       "name": "VTV1 HD",
@@ -528,7 +528,7 @@
           "index": 12,
           "time": "11:30",
           "title": "Hãy nói lời yêu - Tập 32",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1788841800,
           "end_epoch": 1788844500,
           "catchup_url": null
@@ -968,23 +968,23 @@
           "title": "Thông tin 260",
           "is_replayable": true,
           "start_epoch": 1788840600,
-          "end_epoch": 1788840900,
+          "end_epoch": 1788840780,
           "catchup_url": null
         },
         {
           "index": 18,
-          "time": "11:15",
+          "time": "11:13",
           "title": "Điều nhỏ bé kỳ diệu",
           "is_replayable": true,
-          "start_epoch": 1788840900,
-          "end_epoch": 1788841800,
+          "start_epoch": 1788840838,
+          "end_epoch": 1788841798,
           "catchup_url": null
         },
         {
           "index": 19,
           "time": "11:30",
           "title": "Gì thế nhỉ",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1788841800,
           "end_epoch": 1788842700,
           "catchup_url": null
@@ -1941,7 +1941,7 @@
           "index": 8,
           "time": "11:30",
           "title": "Thời sự",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1788841800,
           "end_epoch": 1788843000,
           "catchup_url": null
@@ -2298,7 +2298,7 @@
           "index": 9,
           "time": "11:30",
           "title": "Thời sự",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1788841800,
           "end_epoch": 1788843000,
           "catchup_url": null
@@ -2547,7 +2547,7 @@
           "index": 11,
           "time": "11:30",
           "title": "Thời sự",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1788841800,
           "end_epoch": 1788843000,
           "catchup_url": null
@@ -3180,7 +3180,7 @@
           "index": 13,
           "time": "11:30",
           "title": "Học cùng con: Số 20 - Những viên đá kỳ diệu",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1788841800,
           "end_epoch": 1788842700,
           "catchup_url": null
@@ -3609,7 +3609,7 @@
           "index": 9,
           "time": "11:30",
           "title": "Nóng cùng V8: Nóng cùng V8 (20)",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1788841800,
           "end_epoch": 1788842700,
           "catchup_url": null
@@ -4029,7 +4029,7 @@
           "index": 16,
           "time": "11:30",
           "title": "Quả cầu thông thái",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1788841800,
           "end_epoch": 1788843000,
           "catchup_url": null
