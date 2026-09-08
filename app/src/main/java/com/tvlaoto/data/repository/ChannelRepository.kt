@@ -78,6 +78,22 @@ class ChannelRepository(
 
     private val tv360SessionId: String = java.util.UUID.randomUUID().toString()
 
+    /**
+     * CDN URL cache — bypass TV360 device limit.
+     * get-link API creates a new device session per call (max 2 concurrent).
+     * But the CDN streaming URLs returned are valid for ~3 hours and have NO device checks.
+     * Cache them and reuse for catchup/timeshift by appending &timeshift=X.
+     */
+    private data class CachedStreamUrl(
+        val url: String,
+        val expireTime: Long // System.currentTimeMillis() when URL expires
+    ) {
+        fun isValid(): Boolean = System.currentTimeMillis() < expireTime
+    }
+    private val tv360UrlCache = java.util.concurrent.ConcurrentHashMap<Int, CachedStreamUrl>()
+    // CDN token valid ~3 hours; use 2.5h safety margin
+    private val TV360_CACHE_TTL_MS = 2L * 3600 * 1000 + 30 * 60 * 1000 // 2h30m
+
     private fun loadSettings(): AppSettings {
         return AppSettings(
             customM3uUrl = prefs.getString("custom_m3u_url", "") ?: "",
@@ -93,6 +109,8 @@ class ChannelRepository(
         } else {
             loadBundledDemoPlaylist()
         }
+        // Note: movie channel URLs are cached lazily on first access.
+        // CDN URLs are valid ~3h so subsequent switches/catchup use cache (no device limit).
     }
 
     suspend fun loadBundledDemoPlaylist() = withContext(Dispatchers.IO) {
@@ -692,6 +710,9 @@ class ChannelRepository(
             if (linkPlay.isNotEmpty()) {
                 com.tvlaoto.util.AppLogger.i("ChannelRepo", "TV360 URL: ${linkPlay.take(80)}...")
                 lastTv360Error = null
+                // Cache the CDN URL — valid ~3h, no device checks on CDN
+                tv360UrlCache[tv360Id] = CachedStreamUrl(linkPlay, System.currentTimeMillis() + TV360_CACHE_TTL_MS)
+                com.tvlaoto.util.AppLogger.i("ChannelRepo", "TV360 cached URL for channel $tv360Id (expires in 2.5h)")
                 return linkPlay
             }
 
@@ -715,6 +736,17 @@ class ChannelRepository(
     suspend fun fetchTv360Url(channelKey: String): String? = withContext(Dispatchers.IO) {
         val tv360Id = TV360_CHANNEL_MAP[channelKey.lowercase()] ?: channelKey.toIntOrNull() ?: return@withContext null
         val isMovie = tv360Id in setOf(9903, 10009, 10010, 10011, 10012, 10013, 10055) || tv360Id >= 10000
+
+        // Check CDN cache first — cached URLs work without device session checks
+        val cached = tv360UrlCache[tv360Id]
+        if (cached != null && cached.isValid()) {
+            com.tvlaoto.util.AppLogger.i("ChannelRepo", "TV360 cache HIT for channel $tv360Id (bypass device limit)")
+            lastTv360Error = null
+            lastTv360ErrorCode = 200
+            return@withContext cached.url
+        }
+
+        // Cache miss — need to call get-link API (creates device session)
         var url = doFetchTv360(tv360Id, isMovie)
 
         // Auto-retry on S-006 with alternate parameters
@@ -723,8 +755,17 @@ class ChannelRepository(
             url = doFetchTv360(tv360Id, !isMovie)
         }
 
-        // Auto-retry on 428 (device limit) with delay — sessions may expire between retries
+        // Auto-retry on 428 (device limit) — try cached URL from another channel as fallback
         if (url == null && lastTv360ErrorCode == 428) {
+            // First: if we have ANY valid cached URL for this channel, use it even if slightly old
+            val anyCached = tv360UrlCache[tv360Id]
+            if (anyCached != null) {
+                com.tvlaoto.util.AppLogger.i("ChannelRepo", "TV360 428 fallback: using cached URL for $tv360Id")
+                lastTv360Error = null
+                return@withContext anyCached.url
+            }
+
+            // Otherwise retry with delay
             for (attempt in 1..2) {
                 com.tvlaoto.util.AppLogger.i("ChannelRepo", "TV360 device limit retry $attempt/2 for $tv360Id (waiting 5s)...")
                 Thread.sleep(5000)
@@ -733,6 +774,41 @@ class ChannelRepository(
             }
         }
         url
+    }
+
+    /**
+     * Pre-fetch and cache streaming URLs for ALL movie channels.
+     * Call once at app startup. Fetches sequentially to minimize device sessions.
+     * After this, all movie channel switches use cached CDN URLs (no device limit).
+     */
+    private val TV360_MOVIE_CHANNELS = listOf(9903, 10009, 10010, 10011, 10012, 10013, 10055)
+
+    suspend fun prefetchTv360MovieUrls() = withContext(Dispatchers.IO) {
+        com.tvlaoto.util.AppLogger.i("ChannelRepo", "TV360 pre-fetching ${TV360_MOVIE_CHANNELS.size} movie channel URLs...")
+        var successCount = 0
+        for (channelId in TV360_MOVIE_CHANNELS) {
+            // Skip if already cached
+            val existing = tv360UrlCache[channelId]
+            if (existing != null && existing.isValid()) {
+                successCount++
+                continue
+            }
+            try {
+                val url = doFetchTv360(channelId, isMovie = true)
+                if (url != null) {
+                    successCount++
+                } else if (lastTv360ErrorCode == 428) {
+                    // Device limit hit — stop prefetching, remaining channels will fetch on-demand
+                    com.tvlaoto.util.AppLogger.w("ChannelRepo", "TV360 prefetch stopped at channel $channelId (device limit)")
+                    break
+                }
+            } catch (e: Exception) {
+                com.tvlaoto.util.AppLogger.w("ChannelRepo", "TV360 prefetch error for $channelId: ${e.message}")
+            }
+            // Small delay between requests to avoid rate limiting
+            Thread.sleep(200)
+        }
+        com.tvlaoto.util.AppLogger.i("ChannelRepo", "TV360 prefetch complete: $successCount/${TV360_MOVIE_CHANNELS.size} cached")
     }
 
     /**
