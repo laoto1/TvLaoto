@@ -105,12 +105,19 @@ class PlayerViewModel(
         }
 
         // For THVL channels: fetch stream URL on-demand from TV360 API
-        val isTHVL = channel.id.lowercase().startsWith("thvl")
-        if (isTHVL) {
+        val thvlKey = when {
+            channel.streamUrl.contains("tv360.vn") -> {
+                // Extract THVL key from name: "THVL1" -> "thvl1", "THVL2" -> "thvl2", etc.
+                val match = Regex("""thvl(\d)""", RegexOption.IGNORE_CASE).find(channel.name)
+                match?.let { "thvl${it.groupValues[1]}" }
+            }
+            else -> null
+        }
+        if (thvlKey != null) {
             viewModelScope.launch {
                 try {
-                    com.tvlaoto.util.AppLogger.i("Player", "Fetching TV360 URL for ${channel.id}...")
-                    val tv360Url = repository.fetchTv360Url(channel.id)
+                    com.tvlaoto.util.AppLogger.i("Player", "Fetching TV360 URL for $thvlKey (${channel.name})...")
+                    val tv360Url = repository.fetchTv360Url(thvlKey)
                     if (tv360Url != null) {
                         com.tvlaoto.util.AppLogger.i("Player", "TV360 resolved: ${tv360Url.take(80)}...")
                         val mediaSource = TvPlayerFactory.createMediaSource(channel.copy(streamUrl = tv360Url))

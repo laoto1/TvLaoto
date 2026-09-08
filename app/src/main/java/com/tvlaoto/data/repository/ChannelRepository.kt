@@ -513,15 +513,20 @@ class ChannelRepository(
     suspend fun fetchTv360Url(channelKey: String): String? = withContext(Dispatchers.IO) {
         val tv360Id = TV360_CHANNEL_MAP[channelKey.lowercase()] ?: return@withContext null
         try {
-            val params = "id=$tv360Id"
+            val timestamp = System.currentTimeMillis() / 1000
+            val deviceId = "web_${java.util.UUID.randomUUID()}"
+            val sessionId = java.util.UUID.randomUUID().toString()
+            val params = "id=$tv360Id&type=live&mod=LIVE&t=$timestamp&secured=true&drm=3%2C4&price=0&subInfo=3&llc=1&groupChannel=0"
             val sq = URLEncoder.encode(tv360Encrypt(params), "UTF-8")
             val url = "$TV360_GET_LINK_API?sq=$sq&secured=true"
 
             val request = Request.Builder()
                 .url(url)
-                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
-                .header("Accept", "application/json")
+                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
+                .header("Accept", "application/json, text/plain, */*")
+                .header("Content-Type", "application/json")
                 .header("Referer", "https://tv360.vn/")
+                .header("Cookie", "device-id=$deviceId; shared-device-id=$deviceId; session-id=$sessionId")
                 .build()
 
             val response = httpClient.newCall(request).execute()
