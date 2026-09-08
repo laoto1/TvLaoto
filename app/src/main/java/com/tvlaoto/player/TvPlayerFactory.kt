@@ -11,6 +11,7 @@ import androidx.media3.datasource.okhttp.OkHttpDataSource
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.dash.DashMediaSource
 import androidx.media3.exoplayer.hls.HlsMediaSource
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
@@ -90,23 +91,37 @@ object TvPlayerFactory {
         val isHls = uri.contains(".m3u8", ignoreCase = true) ||
                     uri.contains("/hls", ignoreCase = true) ||
                     uri.contains("/manifest", ignoreCase = true)
+        val isDash = uri.contains(".mpd", ignoreCase = true) ||
+                     uri.contains("/dash", ignoreCase = true)
 
-        return if (isHls) {
-            val mediaItem = MediaItem.Builder()
-                .setUri(uri)
-                .setMimeType(MimeTypes.APPLICATION_M3U8)
-                .build()
+        return when {
+            isHls -> {
+                val mediaItem = MediaItem.Builder()
+                    .setUri(uri)
+                    .setMimeType(MimeTypes.APPLICATION_M3U8)
+                    .build()
 
-            HlsMediaSource.Factory(dataSourceFactory)
-                .setAllowChunklessPreparation(true)
-                .createMediaSource(mediaItem)
-        } else {
-            val mediaItem = MediaItem.Builder()
-                .setUri(uri)
-                .build()
+                HlsMediaSource.Factory(dataSourceFactory)
+                    .setAllowChunklessPreparation(true)
+                    .createMediaSource(mediaItem)
+            }
+            isDash -> {
+                val mediaItem = MediaItem.Builder()
+                    .setUri(uri)
+                    .setMimeType(MimeTypes.APPLICATION_MPD)
+                    .build()
 
-            ProgressiveMediaSource.Factory(dataSourceFactory)
-                .createMediaSource(mediaItem)
+                DashMediaSource.Factory(dataSourceFactory)
+                    .createMediaSource(mediaItem)
+            }
+            else -> {
+                val mediaItem = MediaItem.Builder()
+                    .setUri(uri)
+                    .build()
+
+                ProgressiveMediaSource.Factory(dataSourceFactory)
+                    .createMediaSource(mediaItem)
+            }
         }
     }
 }

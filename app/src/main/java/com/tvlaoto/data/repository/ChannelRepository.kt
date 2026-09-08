@@ -644,11 +644,11 @@ class ChannelRepository(
                 return@withContext linkPlay
             }
 
-            // Try finding m3u8 URL in decrypted text
-            val m3u8Regex = Regex("""https?://[^\s"']+\.m3u8[^\s"']*""")
-            val match = m3u8Regex.find(decrypted)
+            // Try finding m3u8 or mpd URL in decrypted text
+            val streamRegex = Regex("""https?://[^\s"']+\.(m3u8|mpd)[^\s"']*""")
+            val match = streamRegex.find(decrypted)
             if (match != null) {
-                com.tvlaoto.util.AppLogger.i("ChannelRepo", "TV360 m3u8: ${match.value.take(80)}...")
+                com.tvlaoto.util.AppLogger.i("ChannelRepo", "TV360 stream: ${match.value.take(80)}...")
                 return@withContext match.value
             }
 
