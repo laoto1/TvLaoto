@@ -156,18 +156,40 @@ class PlayerViewModel(
                     }
                     com.tvlaoto.util.AppLogger.i("Player", "Fetching VTVGo live URL for channel $channelId (${channel.name})...")
                     val liveUrls = repository.fetchVtvgoLiveUrls(channelId)
-                    val liveUrl = liveUrls.firstOrNull()
-                    if (liveUrl != null) {
-                        com.tvlaoto.util.AppLogger.i("Player", "VTVGo resolved: ${liveUrl.take(80)}...")
-                        val mediaSource = TvPlayerFactory.createMediaSource(channel.copy(streamUrl = liveUrl))
-                        player.setMediaSource(mediaSource)
-                        player.prepare()
-                        player.playWhenReady = true
-                    } else {
+                    if (liveUrls.isEmpty()) {
                         com.tvlaoto.util.AppLogger.w("Player", "VTVGo API returned no stream for channel $channelId")
                         _errorMessage.value = "Không thể tải luồng phát sóng."
                         _isBuffering.value = false
+                        return@launch
                     }
+
+                    // Probe URLs to find one that actually works (some CDNs return 404)
+                    var workingUrl: String? = null
+                    for (url in liveUrls) {
+                        try {
+                            val probeReq = okhttp3.Request.Builder()
+                                .url(url)
+                                .head()
+                                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
+                                .build()
+                            val probeResp = repository.probeUrl(probeReq)
+                            com.tvlaoto.util.AppLogger.d("Player", "Probe ${url.take(60)}: ${probeResp}")
+                            if (probeResp in 200..299) {
+                                workingUrl = url
+                                break
+                            }
+                        } catch (e: Exception) {
+                            com.tvlaoto.util.AppLogger.d("Player", "Probe failed ${url.take(60)}: ${e.message}")
+                        }
+                    }
+                    // Fallback to first URL if all probes fail (some CDNs block HEAD but allow GET)
+                    val liveUrl = workingUrl ?: liveUrls.first()
+
+                    com.tvlaoto.util.AppLogger.i("Player", "VTVGo resolved: ${liveUrl.take(80)}...")
+                    val mediaSource = TvPlayerFactory.createMediaSource(channel.copy(streamUrl = liveUrl))
+                    player.setMediaSource(mediaSource)
+                    player.prepare()
+                    player.playWhenReady = true
                 } catch (e: Exception) {
                     com.tvlaoto.util.AppLogger.e("Player", "VTVGo play error", e)
                     _errorMessage.value = e.localizedMessage ?: "Lỗi phát luồng VTVGo"

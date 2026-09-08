@@ -491,6 +491,20 @@ class ChannelRepository(
     }
 
     /**
+     * Probe a URL via HEAD request, returns HTTP status code.
+     */
+    suspend fun probeUrl(request: okhttp3.Request): Int = withContext(Dispatchers.IO) {
+        try {
+            val response = httpClient.newCall(request).execute()
+            val code = response.code
+            response.close()
+            code
+        } catch (e: Exception) {
+            -1
+        }
+    }
+
+    /**
      * Fetch catchup stream URL from VTVGo playback API.
      * Pure HTTP — no WebView needed!
      */
