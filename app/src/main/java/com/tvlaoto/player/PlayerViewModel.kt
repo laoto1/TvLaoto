@@ -155,7 +155,8 @@ class PlayerViewModel(
                         return@launch
                     }
                     com.tvlaoto.util.AppLogger.i("Player", "Fetching VTVGo live URL for channel $channelId (${channel.name})...")
-                    val liveUrl = repository.fetchVtvgoLiveUrl(channelId)
+                    val liveUrls = repository.fetchVtvgoLiveUrls(channelId)
+                    val liveUrl = liveUrls.firstOrNull()
                     if (liveUrl != null) {
                         com.tvlaoto.util.AppLogger.i("Player", "VTVGo resolved: ${liveUrl.take(80)}...")
                         val mediaSource = TvPlayerFactory.createMediaSource(channel.copy(streamUrl = liveUrl))

@@ -430,10 +430,11 @@ class ChannelRepository(
     }
 
     /**
-     * Fetch live stream URL from VTVGo playback API.
-     * Used for ALL VTVGo channels (VTV + regional) that don't have pre-resolved URLs.
+     * Fetch live stream URLs from VTVGo playback API.
+     * Returns ALL available CDN URLs so caller can try fallbacks.
      */
-    suspend fun fetchVtvgoLiveUrl(channelId: String): String? = withContext(Dispatchers.IO) {
+    suspend fun fetchVtvgoLiveUrls(channelId: String): List<String> = withContext(Dispatchers.IO) {
+        val urls = mutableListOf<String>()
         try {
             val deviceId = java.util.UUID.randomUUID().toString()
             val jsonBody = org.json.JSONObject().apply {
@@ -459,34 +460,34 @@ class ChannelRepository(
             val response = httpClient.newCall(request).execute()
             if (!response.isSuccessful) {
                 com.tvlaoto.util.AppLogger.w("ChannelRepo", "VTVGo live API: ${response.code}")
-                return@withContext null
+                return@withContext urls
             }
 
-            val body = response.body?.string() ?: return@withContext null
+            val body = response.body?.string() ?: return@withContext urls
             val json = org.json.JSONObject(body)
-            val data = json.optJSONObject("data") ?: return@withContext null
-            val sourceModes = data.optJSONArray("sourceModes") ?: return@withContext null
+            val data = json.optJSONObject("data") ?: return@withContext urls
+            val sourceModes = data.optJSONArray("sourceModes") ?: return@withContext urls
 
             for (i in 0 until sourceModes.length()) {
                 val mode = sourceModes.getJSONObject(i)
                 if (mode.optString("id") == "default") {
                     val multiSource = mode.optJSONArray("multiSource") ?: continue
-                    if (multiSource.length() > 0) {
-                        val sources = multiSource.getJSONObject(0).optJSONArray("sources") ?: continue
-                        if (sources.length() > 0) {
-                            val url = sources.getJSONObject(0).optString("url", "")
+                    for (j in 0 until multiSource.length()) {
+                        val sources = multiSource.getJSONObject(j).optJSONArray("sources") ?: continue
+                        for (k in 0 until sources.length()) {
+                            val url = sources.getJSONObject(k).optString("url", "")
                             if (url.isNotEmpty()) {
-                                com.tvlaoto.util.AppLogger.i("ChannelRepo", "VTVGo live: ${url.take(80)}...")
-                                return@withContext url
+                                urls.add(url)
                             }
                         }
                     }
                 }
             }
+            com.tvlaoto.util.AppLogger.i("ChannelRepo", "VTVGo live: ${urls.size} URLs for ch $channelId")
         } catch (e: Exception) {
             com.tvlaoto.util.AppLogger.w("ChannelRepo", "VTVGo live error: ${e.message}")
         }
-        null
+        urls
     }
 
     /**
