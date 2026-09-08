@@ -144,7 +144,7 @@ fun ProgramInfoPanel(
             verticalAlignment = Alignment.CenterVertically
         ) {
             // 1. Replay
-            if (channel.resolvedUrl != null) {
+            if (channel.resolvedUrl != null || channel.streamUrl.contains("tv360.vn")) {
                 EpgActionButton(
                     title = stringResource(R.string.replay),
                     icon = Icons.Default.Replay,

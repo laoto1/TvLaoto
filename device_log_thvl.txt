@@ -1,0 +1,123 @@
+============================================================
+=== AFlix TV Session Start ===
+=== 2026-09-08 12:27:39.047 ===
+=== Device: Samsung SM-S938U ===
+=== Android: 12 (SDK 32) ===
+=== ABI: x86_64, arm64-v8a, x86, armeabi-v7a, armeabi ===
+=== RAM: 192MB max ===
+============================================================
+[2026-09-08 12:27:39.065] I/AppLogger: Logger initialized: /storage/emulated/0/Android/data/com.tvlaoto.debug/files/logs/app_log.txt
+[2026-09-08 12:27:39.065] I/App: AFlix TV starting up
+[2026-09-08 12:27:41.200] I/ChannelRepo: Merged 11 resolved URLs
+[2026-09-08 12:27:43.087] I/Player: Playing: VTV1 HD (ch_1501669539_349825479)
+[2026-09-08 12:27:43.089] D/Player: Stream URL: https://vtvgo.vn/xem-truc-tuyen-kenh-vtv1-1.html
+[2026-09-08 12:27:43.096] D/Player: Play URL: https://vtvgoliveapp2-aws-qt.vtvdigital.vn/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9....
+[2026-09-08 12:27:43.106] D/Player: State: BUFFERING (channel=VTV1 HD)
+[2026-09-08 12:27:43.448] I/ChannelRepo: Loaded EPG for 11 channels
+[2026-09-08 12:27:47.856] D/Player: State: READY (channel=VTV1 HD)
+[2026-09-08 12:27:47.858] D/Player: isPlaying=true
+[2026-09-08 12:28:00.154] I/Player: Playing: VTV2 HD (ch_1501699330_349825479)
+[2026-09-08 12:28:00.157] D/Player: Stream URL: https://vtvgo.vn/xem-truc-tuyen-kenh-vtv2-2.html
+[2026-09-08 12:28:00.159] D/Player: Play URL: https://vtv-live-push-token.akamaized.net/hls/live/2029308/vtv2/playlist.m3u8?hd...
+[2026-09-08 12:28:00.167] D/Player: State: BUFFERING (channel=VTV2 HD)
+[2026-09-08 12:28:00.168] D/Player: isPlaying=false
+[2026-09-08 12:28:02.353] D/Player: State: READY (channel=VTV2 HD)
+[2026-09-08 12:28:02.355] D/Player: isPlaying=true
+[2026-09-08 12:28:06.312] I/Player: Playing: VTV3 HD (ch_1501729121_349825479)
+[2026-09-08 12:28:06.314] D/Player: Stream URL: https://vtvgo.vn/xem-truc-tuyen-kenh-vtv3-3.html
+[2026-09-08 12:28:06.315] D/Player: Play URL: https://vtvgoliveapp2-aws-qt.vtvdigital.vn/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9....
+[2026-09-08 12:28:06.325] D/Player: State: BUFFERING (channel=VTV3 HD)
+[2026-09-08 12:28:06.327] D/Player: isPlaying=false
+[2026-09-08 12:28:06.921] D/Player: State: READY (channel=VTV3 HD)
+[2026-09-08 12:28:06.925] D/Player: isPlaying=true
+[2026-09-08 12:28:10.892] D/Player: State: BUFFERING (channel=VTV3 HD)
+[2026-09-08 12:28:10.895] D/Player: isPlaying=false
+[2026-09-08 12:28:11.351] D/Player: State: READY (channel=VTV3 HD)
+[2026-09-08 12:28:11.355] D/Player: isPlaying=true
+============================================================
+=== AFlix TV Session Start ===
+=== 2026-09-08 12:32:36.294 ===
+=== Device: Samsung SM-S938U ===
+=== Android: 12 (SDK 32) ===
+=== ABI: x86_64, arm64-v8a, x86, armeabi-v7a, armeabi ===
+=== RAM: 192MB max ===
+============================================================
+[2026-09-08 12:32:36.311] I/AppLogger: Logger initialized: /storage/emulated/0/Android/data/com.tvlaoto.debug/files/logs/app_log.txt
+[2026-09-08 12:32:36.311] I/App: AFlix TV starting up
+[2026-09-08 12:32:37.909] I/ChannelRepo: Merged 11 resolved URLs
+[2026-09-08 12:32:40.032] I/Player: Playing: VTV3 HD (ch_1501729121_349825479)
+[2026-09-08 12:32:40.033] D/Player: Stream URL: https://vtvgo.vn/xem-truc-tuyen-kenh-vtv3-3.html
+[2026-09-08 12:32:40.042] D/Player: Play URL: https://vtvgoliveapp2-aws-qt.vtvdigital.vn/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9....
+[2026-09-08 12:32:40.080] D/Player: State: BUFFERING (channel=VTV3 HD)
+[2026-09-08 12:32:40.430] D/ChannelRepo: EPG v21: 55 programs for channel 3
+[2026-09-08 12:32:41.627] D/Player: State: READY (channel=VTV3 HD)
+[2026-09-08 12:32:41.634] D/Player: isPlaying=true
+[2026-09-08 12:33:37.531] D/Player: isPlaying=false
+[2026-09-08 12:33:53.947] I/Player: Fetching catchup: Phim truyện: Hoa nở về đêm - Tập  3 (slotId=355131553535234070)
+[2026-09-08 12:33:54.021] I/ChannelRepo: Catchup: https://vtvgo-mhtimeshift.vtvdigital.vn/hoFlN6YahueOYh22UeZ5qQ/1788860034/manife...
+[2026-09-08 12:33:54.042] I/Player: Playing catchup: https://vtvgo-mhtimeshift.vtvdigital.vn/hoFlN6YahueOYh22UeZ5qQ/1788860034/manife...
+[2026-09-08 12:33:54.058] D/Player: State: BUFFERING (channel=VTV3 HD)
+[2026-09-08 12:33:54.749] D/Player: State: READY (channel=VTV3 HD)
+[2026-09-08 12:33:54.751] D/Player: isPlaying=true
+[2026-09-08 12:34:02.384] I/Player: Fetching catchup: Phim truyện: Ấm áp và ngọt ngào - Tập 3 (slotId=355131553535234049)
+[2026-09-08 12:34:02.493] I/ChannelRepo: Catchup: https://vtvgo-mhtimeshift.vtvdigital.vn/gyR506t-BfbJqDrhr8QRBQ/1788860042/manife...
+[2026-09-08 12:34:02.536] I/Player: Playing catchup: https://vtvgo-mhtimeshift.vtvdigital.vn/gyR506t-BfbJqDrhr8QRBQ/1788860042/manife...
+[2026-09-08 12:34:02.560] D/Player: State: BUFFERING (channel=VTV3 HD)
+[2026-09-08 12:34:02.561] D/Player: isPlaying=false
+[2026-09-08 12:34:03.149] D/Player: State: READY (channel=VTV3 HD)
+[2026-09-08 12:34:03.152] D/Player: isPlaying=true
+[2026-09-08 12:34:05.693] D/Player: isPlaying=false
+[2026-09-08 13:24:44.891] I/Player: Playing: THVL1 (ch_79805767_445940943)
+[2026-09-08 13:24:44.895] D/Player: Stream URL: https://tv360.vn/tv/vinh-long-1?ch=25
+[2026-09-08 13:24:44.897] D/Player: Direct EPG empty, trying server EPG for THVL1...
+[2026-09-08 13:24:44.900] I/Player: Fetching TV360 URL for thvl1 (THVL1)...
+[2026-09-08 13:24:45.183] D/ChannelRepo: TV360 decrypted: {"urlStreaming":"https://fo-hlc.tv360.vn/bpk-tv/252/output/index.m3u8?auth=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZXRob2QiOiJHRVQiLCJleHAiOjE3ODg4Nz...
+[2026-09-08 13:24:45.184] I/ChannelRepo: TV360 m3u8: https://fo-hlc.tv360.vn/bpk-tv/252/output/index.m3u8?auth=eyJhbGciOiJIUzI1NiIsIn...
+[2026-09-08 13:24:45.186] I/Player: TV360 resolved: https://fo-hlc.tv360.vn/bpk-tv/252/output/index.m3u8?auth=eyJhbGciOiJIUzI1NiIsIn...
+[2026-09-08 13:24:45.192] D/Player: State: BUFFERING (channel=THVL1)
+[2026-09-08 13:24:45.785] D/Player: State: READY (channel=THVL1)
+[2026-09-08 13:24:45.793] D/Player: isPlaying=true
+[2026-09-08 13:24:46.691] I/ChannelRepo: Loaded EPG for 11 channels
+[2026-09-08 13:25:07.641] D/Player: isPlaying=false
+[2026-09-08 13:26:11.132] I/Player: Playing: VTV3 HD (ch_1501729121_349825479)
+[2026-09-08 13:26:11.133] D/Player: Stream URL: https://vtvgo.vn/xem-truc-tuyen-kenh-vtv3-3.html
+[2026-09-08 13:26:11.134] D/Player: Play URL: https://vtvgoliveapp2-aws-qt.vtvdigital.vn/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9....
+[2026-09-08 13:26:11.142] D/Player: State: BUFFERING (channel=VTV3 HD)
+[2026-09-08 13:26:13.092] D/Player: State: READY (channel=VTV3 HD)
+[2026-09-08 13:26:13.093] D/Player: isPlaying=true
+[2026-09-08 13:26:31.107] D/Player: isPlaying=false
+[2026-09-08 13:38:46.853] I/Player: Playing: THVL1 (ch_79805767_445940943)
+[2026-09-08 13:38:46.854] D/Player: Stream URL: https://tv360.vn/tv/vinh-long-1?ch=25
+[2026-09-08 13:38:46.855] D/Player: Direct EPG empty, trying server EPG for THVL1...
+[2026-09-08 13:38:46.856] I/Player: Fetching TV360 URL for thvl1 (THVL1)...
+[2026-09-08 13:38:46.976] D/ChannelRepo: TV360 decrypted: {"urlStreaming":"https://tr-netcdn.tv360.vn/netcdn-live/252/output/index.m3u8?timestamp=1788871125&wmkid=0&token=7c59cae579e8e810274bb9aac097f230&minr...
+[2026-09-08 13:38:46.978] I/ChannelRepo: TV360 m3u8: https://tr-netcdn.tv360.vn/netcdn-live/252/output/index.m3u8?timestamp=178887112...
+[2026-09-08 13:38:46.979] I/Player: TV360 resolved: https://tr-netcdn.tv360.vn/netcdn-live/252/output/index.m3u8?timestamp=178887112...
+[2026-09-08 13:38:46.982] D/Player: State: BUFFERING (channel=THVL1)
+[2026-09-08 13:38:47.426] I/ChannelRepo: Loaded EPG for 11 channels
+[2026-09-08 13:38:47.859] D/Player: State: READY (channel=THVL1)
+[2026-09-08 13:38:47.860] D/Player: isPlaying=true
+[2026-09-08 13:38:55.354] D/Player: isPlaying=false
+[2026-09-08 13:38:55.616] D/Player: isPlaying=true
+[2026-09-08 13:38:56.656] D/Player: isPlaying=false
+============================================================
+=== AFlix TV Session Start ===
+=== 2026-09-08 13:50:34.390 ===
+=== Device: Samsung SM-S938U ===
+=== Android: 12 (SDK 32) ===
+=== ABI: x86_64, arm64-v8a, x86, armeabi-v7a, armeabi ===
+=== RAM: 192MB max ===
+============================================================
+[2026-09-08 13:50:34.411] I/AppLogger: Logger initialized: /storage/emulated/0/Android/data/com.tvlaoto.debug/files/logs/app_log.txt
+[2026-09-08 13:50:34.413] I/App: AFlix TV starting up
+[2026-09-08 13:50:37.686] I/ChannelRepo: Merged 11 resolved URLs
+[2026-09-08 13:50:39.490] I/Player: Playing: THVL1 (ch_79805767_445940943)
+[2026-09-08 13:50:39.493] D/Player: Stream URL: https://tv360.vn/tv/vinh-long-1?ch=25
+[2026-09-08 13:50:39.502] I/Player: Fetching TV360 URL for thvl1 (THVL1)...
+[2026-09-08 13:50:39.688] I/ChannelRepo: Loaded TV360 EPG: 52 programs for thvl1
+[2026-09-08 13:50:39.760] D/ChannelRepo: TV360 decrypted: {"urlStreaming":"https://tr-netcdn.tv360.vn/netcdn-live/252/output/index.m3u8?timestamp=1788871839&wmkid=0&token=6ed39b0ec40f6151c4bd74eab3df1340&minr...
+[2026-09-08 13:50:39.762] I/ChannelRepo: TV360 m3u8: https://tr-netcdn.tv360.vn/netcdn-live/252/output/index.m3u8?timestamp=178887183...
+[2026-09-08 13:50:39.763] I/Player: TV360 resolved: https://tr-netcdn.tv360.vn/netcdn-live/252/output/index.m3u8?timestamp=178887183...
+[2026-09-08 13:50:39.776] D/Player: State: BUFFERING (channel=THVL1)
+[2026-09-08 13:50:40.506] D/Player: State: READY (channel=THVL1)
+[2026-09-08 13:50:40.509] D/Player: isPlaying=true

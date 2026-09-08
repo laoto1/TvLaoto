@@ -613,7 +613,7 @@ class ChannelRepository(
                 val epochSt = item.optLong("epochSt", 0L) / 1000L
                 val epochEt = item.optLong("epochEt", 0L) / 1000L
 
-                val isReplayable = epochEt > 0 && epochEt < nowEpoch
+                val isReplayable = (epochEt > 0 && epochEt < nowEpoch) || item.optInt("status", 0) == 1
 
                 list.add(
                     com.tvlaoto.data.model.EpgProgram(
@@ -627,7 +627,8 @@ class ChannelRepository(
                     )
                 )
             }
-            com.tvlaoto.util.AppLogger.i("ChannelRepo", "Loaded TV360 EPG: ${list.size} programs for $channelKey")
+            val replayCount = list.count { it.isReplayable }
+            com.tvlaoto.util.AppLogger.i("ChannelRepo", "Loaded TV360 EPG: ${list.size} programs for $channelKey ($replayCount replayable)")
         } catch (e: Exception) {
             com.tvlaoto.util.AppLogger.w("ChannelRepo", "TV360 EPG error for $channelKey: ${e.message}")
         }

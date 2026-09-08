@@ -18,6 +18,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Replay
+import androidx.compose.ui.res.stringResource
+import com.tvlaoto.R
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -315,12 +317,33 @@ fun EpgProgramItem(
             
             if (program.isReplayable && !isLive) {
                 Spacer(modifier = Modifier.width(8.dp))
-                Icon(
-                    imageVector = Icons.Default.Replay,
-                    contentDescription = "Replay",
-                    tint = if (isFocused) Color.White else GtaColors.ElectricCyan,
-                    modifier = Modifier.size(20.dp)
-                )
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(4.dp))
+                        .background(if (isFocused) GtaColors.ElectricCyan else Color(0x3300F0FF))
+                        .padding(horizontal = 6.dp, vertical = 2.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(3.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Replay,
+                            contentDescription = "Replay",
+                            tint = if (isFocused) Color.Black else GtaColors.ElectricCyan,
+                            modifier = Modifier.size(12.dp)
+                        )
+                        Text(
+                            text = stringResource(R.string.replay).uppercase(),
+                            style = TextStyle(
+                                fontFamily = FontFamily.SansSerif,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 10.sp,
+                                color = if (isFocused) Color.Black else GtaColors.ElectricCyan
+                            )
+                        )
+                    }
+                }
             }
         }
     }
