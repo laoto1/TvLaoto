@@ -127,13 +127,17 @@ class PlayerViewModel(
                         player.prepare()
                         player.playWhenReady = true
                     } else {
-                        // Fallback to resolved URL
-                        val fallbackUrl = channel.resolvedUrl ?: channel.streamUrl
-                        com.tvlaoto.util.AppLogger.w("Player", "TV360 API failed, using fallback: ${fallbackUrl.take(60)}...")
-                        val mediaSource = TvPlayerFactory.createMediaSource(channel.copy(streamUrl = fallbackUrl))
-                        player.setMediaSource(mediaSource)
-                        player.prepare()
-                        player.playWhenReady = true
+                        if (channel.resolvedUrl != null) {
+                            com.tvlaoto.util.AppLogger.i("Player", "TV360 API failed, using pre-resolved URL: ${channel.resolvedUrl.take(60)}...")
+                            val mediaSource = TvPlayerFactory.createMediaSource(channel.copy(streamUrl = channel.resolvedUrl))
+                            player.setMediaSource(mediaSource)
+                            player.prepare()
+                            player.playWhenReady = true
+                        } else {
+                            com.tvlaoto.util.AppLogger.w("Player", "TV360 URL resolution failed for $tv360Key (${channel.name})")
+                            _errorMessage.value = "Kênh này yêu cầu tài khoản TV360 hoặc tạm ngừng phát"
+                            _isBuffering.value = false
+                        }
                     }
                 } catch (e: Exception) {
                     com.tvlaoto.util.AppLogger.e("Player", "TV360 play error", e)
