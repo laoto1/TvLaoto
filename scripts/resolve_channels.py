@@ -142,7 +142,7 @@ async def resolve_thvl(browser, channel_url: str) -> str | None:
 
 
 async def resolve_tv360(browser, channel_url: str) -> str | None:
-    """Resolve TV360 channel — intercept m3u8 from netcdn.tv360.vn."""
+    """Resolve TV360 channel — wait for page to decrypt API and start playback."""
     context = await browser.new_context(
         user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         viewport={"width": 1280, "height": 720},
@@ -151,47 +151,53 @@ async def resolve_tv360(browser, channel_url: str) -> str | None:
     result_url = None
     event = asyncio.Event()
 
+    async def handle_request(request):
+        nonlocal result_url
+        if result_url:
+            return
+        url = request.url
+        # Catch the m3u8 request going OUT (not response)
+        if ".m3u8" in url and ("netcdn" in url or "tv360" in url):
+            print(f"  [TV360] Intercepted request: {url[:120]}...", file=sys.stderr)
+            result_url = url
+            event.set()
+
     async def handle_response(response):
         nonlocal result_url
         if result_url:
             return
         try:
             url = response.url
-
-            # Method 1: Direct m3u8 from netcdn CDN
-            if ".m3u8" in url and ("netcdn" in url or "tv360" in url) and response.ok:
-                print(f"  [TV360] Found m3u8: {url[:100]}...", file=sys.stderr)
+            if ".m3u8" in url and ("netcdn" in url or "tv360" in url):
+                print(f"  [TV360] Intercepted response: {url[:120]}...", file=sys.stderr)
                 result_url = url
                 event.set()
-                return
-
-            # Method 2: Parse encrypted API response for m3u8 URLs
-            content_type = response.headers.get("content-type", "")
-            if "json" in content_type or "mpegurl" in content_type:
-                try:
-                    body = await response.text()
-                    matches = re.findall(r'https?://[^\s"\']+\.m3u8[^\s"\']*', body)
-                    for m in matches:
-                        if "netcdn" in m or "tv360" in m:
-                            print(f"  [TV360] Found m3u8 in body: {m[:100]}...", file=sys.stderr)
-                            result_url = m
-                            event.set()
-                            return
-                except Exception:
-                    pass
         except Exception:
             pass
 
+    page.on("request", handle_request)
     page.on("response", handle_response)
 
     try:
-        await page.goto(channel_url, wait_until="networkidle", timeout=45_000)
-        # Wait extra time for JS to decrypt API response and start playback
-        if not result_url:
-            await asyncio.sleep(5)
-        await asyncio.wait_for(event.wait(), timeout=15)
-    except asyncio.TimeoutError:
-        print(f"  Timeout for TV360: {channel_url}", file=sys.stderr)
+        await page.goto(channel_url, wait_until="domcontentloaded", timeout=30_000)
+        # Wait for m3u8 to be intercepted (TV360 auto-plays)
+        try:
+            await asyncio.wait_for(event.wait(), timeout=30)
+        except asyncio.TimeoutError:
+            # Fallback: try extracting from video element src
+            try:
+                video_src = await page.evaluate("""() => {
+                    const v = document.querySelector('video');
+                    return v ? v.src : null;
+                }""")
+                if video_src and ".m3u8" in video_src:
+                    result_url = video_src
+                    print(f"  [TV360] Got from video.src: {video_src[:100]}...", file=sys.stderr)
+            except Exception:
+                pass
+
+            if not result_url:
+                print(f"  Timeout for TV360: {channel_url}", file=sys.stderr)
     except Exception as e:
         print(f"  TV360 error: {e}", file=sys.stderr)
     finally:
