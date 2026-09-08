@@ -8,7 +8,64 @@ object ChannelLogoProvider {
     private const val GITHUB_LOGO_BASE =
         "https://raw.githubusercontent.com/AqFad2811/epg-iptv-logos/main/logos/vn"
 
+    private val TV360_LOGOS: Map<Int, Int> = mapOf(
+        9 to R.drawable.logo_tv360_9,
+        11 to R.drawable.logo_tv360_11,
+        12 to R.drawable.logo_tv360_12,
+        13 to R.drawable.logo_tv360_13,
+        14 to R.drawable.logo_tv360_14,
+        15 to R.drawable.logo_tv360_15,
+        32 to R.drawable.logo_tv360_32,
+        39 to R.drawable.logo_tv360_39,
+        54 to R.drawable.logo_tv360_54,
+        90 to R.drawable.logo_tv360_90,
+        96 to R.drawable.logo_tv360_96,
+        99 to R.drawable.logo_tv360_99,
+        106 to R.drawable.logo_tv360_106,
+        109 to R.drawable.logo_tv360_109,
+        111 to R.drawable.logo_tv360_111,
+        112 to R.drawable.logo_tv360_112,
+        132 to R.drawable.logo_tv360_132,
+        133 to R.drawable.logo_tv360_133,
+        136 to R.drawable.logo_tv360_136,
+        151 to R.drawable.logo_tv360_151,
+        190 to R.drawable.logo_tv360_190,
+        191 to R.drawable.logo_tv360_191,
+        192 to R.drawable.logo_tv360_192,
+        193 to R.drawable.logo_tv360_193,
+        194 to R.drawable.logo_tv360_194,
+        201 to R.drawable.logo_tv360_201,
+        213 to R.drawable.logo_tv360_213,
+        214 to R.drawable.logo_tv360_214,
+        215 to R.drawable.logo_tv360_215,
+        216 to R.drawable.logo_tv360_216,
+        232 to R.drawable.logo_tv360_232,
+        9852 to R.drawable.logo_tv360_9852,
+        9855 to R.drawable.logo_tv360_9855,
+        9856 to R.drawable.logo_tv360_9856,
+        9901 to R.drawable.logo_tv360_9901,
+        9902 to R.drawable.logo_tv360_9902,
+        9934 to R.drawable.logo_tv360_9934,
+        9951 to R.drawable.logo_tv360_9951,
+        10007 to R.drawable.logo_tv360_10007,
+        10008 to R.drawable.logo_tv360_10008,
+        10014 to R.drawable.logo_tv360_10014,
+        10015 to R.drawable.logo_tv360_10015,
+        10016 to R.drawable.logo_tv360_10016,
+        10017 to R.drawable.logo_tv360_10017,
+        10018 to R.drawable.logo_tv360_10018,
+        10019 to R.drawable.logo_tv360_10019,
+        10020 to R.drawable.logo_tv360_10020,
+        10021 to R.drawable.logo_tv360_10021,
+        10045 to R.drawable.logo_tv360_10045
+    )
+
     fun getDrawableFallback(channel: IptvChannel): Int? {
+        val tv360Id = Regex("""[?&]ch=(\d+)""").find(channel.streamUrl)?.groupValues?.getOrNull(1)?.toIntOrNull()
+        if (tv360Id != null && TV360_LOGOS.containsKey(tv360Id)) {
+            return TV360_LOGOS[tv360Id]
+        }
+
         val norm = channel.name.lowercase().trim()
         val normTvg = (channel.tvgName ?: channel.tvgId ?: "").lowercase().trim()
 

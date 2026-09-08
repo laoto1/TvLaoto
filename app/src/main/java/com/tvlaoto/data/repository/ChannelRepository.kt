@@ -599,7 +599,7 @@ class ChannelRepository(
      * @return m3u8 URL or null
      */
     suspend fun fetchTv360Url(channelKey: String): String? = withContext(Dispatchers.IO) {
-        val tv360Id = TV360_CHANNEL_MAP[channelKey.lowercase()] ?: return@withContext null
+        val tv360Id = TV360_CHANNEL_MAP[channelKey.lowercase()] ?: channelKey.toIntOrNull() ?: return@withContext null
         try {
             val timestamp = System.currentTimeMillis() / 1000
             val deviceId = "web_${java.util.UUID.randomUUID()}"
@@ -632,9 +632,10 @@ class ChannelRepository(
             val decrypted = tv360Decrypt(encryptedData)
             com.tvlaoto.util.AppLogger.d("ChannelRepo", "TV360 decrypted: ${decrypted.take(150)}...")
 
-            // Decrypted data is a JSON string with linkPlay or url field
+            // Decrypted data is a JSON string with urlStreaming, url or linkPlay field
             val dataJson = org.json.JSONObject(decrypted)
-            val linkPlay = dataJson.optString("url", "")
+            val linkPlay = dataJson.optString("urlStreaming", "")
+                .ifEmpty { dataJson.optString("url", "") }
                 .ifEmpty { dataJson.optString("linkPlay", "") }
                 .ifEmpty { dataJson.optString("link_play", "") }
 
@@ -664,7 +665,7 @@ class ChannelRepository(
      * @param channelKey e.g. "thvl1"
      */
     suspend fun fetchTv360Epg(channelKey: String): List<com.tvlaoto.data.model.EpgProgram> = withContext(Dispatchers.IO) {
-        val tv360Id = TV360_CHANNEL_MAP[channelKey.lowercase()] ?: return@withContext emptyList()
+        val tv360Id = TV360_CHANNEL_MAP[channelKey.lowercase()] ?: channelKey.toIntOrNull() ?: return@withContext emptyList()
         val list = mutableListOf<com.tvlaoto.data.model.EpgProgram>()
         try {
             val url = "$TV360_SCHEDULE_API?id=$tv360Id"

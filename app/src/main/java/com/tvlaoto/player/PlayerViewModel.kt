@@ -102,20 +102,24 @@ class PlayerViewModel(
         // Fetch EPG for channel
         fetchEpg()
 
-        // For THVL channels: fetch stream URL on-demand from TV360 API
-        val thvlKey = when {
+        // For TV360 channels: fetch stream URL on-demand from TV360 API
+        val tv360Key = when {
             channel.streamUrl.contains("tv360.vn") -> {
-                // Extract THVL key from name: "THVL1" -> "thvl1", "THVL2" -> "thvl2", etc.
-                val match = Regex("""thvl(\d)""", RegexOption.IGNORE_CASE).find(channel.name)
-                match?.let { "thvl${it.groupValues[1]}" }
+                val chIdMatch = Regex("""[?&]ch=(\d+)""").find(channel.streamUrl)
+                if (chIdMatch != null) {
+                    chIdMatch.groupValues[1]
+                } else {
+                    val match = Regex("""thvl(\d)""", RegexOption.IGNORE_CASE).find(channel.name)
+                    match?.let { "thvl${it.groupValues[1]}" }
+                }
             }
             else -> null
         }
-        if (thvlKey != null) {
+        if (tv360Key != null) {
             viewModelScope.launch {
                 try {
-                    com.tvlaoto.util.AppLogger.i("Player", "Fetching TV360 URL for $thvlKey (${channel.name})...")
-                    val tv360Url = repository.fetchTv360Url(thvlKey)
+                    com.tvlaoto.util.AppLogger.i("Player", "Fetching TV360 URL for $tv360Key (${channel.name})...")
+                    val tv360Url = repository.fetchTv360Url(tv360Key)
                     if (tv360Url != null) {
                         com.tvlaoto.util.AppLogger.i("Player", "TV360 resolved: ${tv360Url.take(80)}...")
                         val mediaSource = TvPlayerFactory.createMediaSource(channel.copy(streamUrl = tv360Url))
@@ -133,7 +137,7 @@ class PlayerViewModel(
                     }
                 } catch (e: Exception) {
                     com.tvlaoto.util.AppLogger.e("Player", "TV360 play error", e)
-                    _errorMessage.value = e.localizedMessage ?: "Lỗi phát luồng THVL"
+                    _errorMessage.value = e.localizedMessage ?: "Lỗi phát luồng TV360"
                     _isBuffering.value = false
                 }
             }
@@ -378,11 +382,16 @@ class PlayerViewModel(
             if (channel.streamUrl.contains("vtvgo.vn")) {
                 list = repository.fetchEpgFromApi(channel.streamUrl)
             } else if (channel.streamUrl.contains("tv360.vn")) {
-                // THVL channels: fetch live EPG directly from TV360 API
-                val match = Regex("""thvl(\d)""", RegexOption.IGNORE_CASE).find(channel.name)
-                val thvlKey = match?.let { "thvl${it.groupValues[1]}" }
-                if (thvlKey != null) {
-                    list = repository.fetchTv360Epg(thvlKey)
+                // TV360 channels: fetch live EPG directly from TV360 API
+                val chIdMatch = Regex("""[?&]ch=(\d+)""").find(channel.streamUrl)
+                val tv360Key = if (chIdMatch != null) {
+                    chIdMatch.groupValues[1]
+                } else {
+                    val match = Regex("""thvl(\d)""", RegexOption.IGNORE_CASE).find(channel.name)
+                    match?.let { "thvl${it.groupValues[1]}" }
+                }
+                if (tv360Key != null) {
+                    list = repository.fetchTv360Epg(tv360Key)
                 }
             }
             if (list.isEmpty()) {
@@ -408,13 +417,18 @@ class PlayerViewModel(
             // If program already has catchupUrl pre-resolved, use it
             var catchupUrl = program.catchupUrl
 
-            // 1. THVL channel from TV360
+            // 1. TV360 channel
             if (catchupUrl == null && channel.streamUrl.contains("tv360.vn")) {
-                val match = Regex("""thvl(\d)""", RegexOption.IGNORE_CASE).find(channel.name)
-                val thvlKey = match?.let { "thvl${it.groupValues[1]}" }
-                if (thvlKey != null) {
-                    com.tvlaoto.util.AppLogger.i("Player", "Fetching TV360 catchup for $thvlKey: ${program.title}")
-                    catchupUrl = repository.fetchTv360CatchupUrl(thvlKey, program)
+                val chIdMatch = Regex("""[?&]ch=(\d+)""").find(channel.streamUrl)
+                val tv360Key = if (chIdMatch != null) {
+                    chIdMatch.groupValues[1]
+                } else {
+                    val match = Regex("""thvl(\d)""", RegexOption.IGNORE_CASE).find(channel.name)
+                    match?.let { "thvl${it.groupValues[1]}" }
+                }
+                if (tv360Key != null) {
+                    com.tvlaoto.util.AppLogger.i("Player", "Fetching TV360 catchup for $tv360Key: ${program.title}")
+                    catchupUrl = repository.fetchTv360CatchupUrl(tv360Key, program)
                 }
             }
             // 2. VTV channel from VTVGo
