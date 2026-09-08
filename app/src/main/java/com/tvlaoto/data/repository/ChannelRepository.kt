@@ -758,10 +758,26 @@ class ChannelRepository(
             com.tvlaoto.util.AppLogger.d("ChannelRepo", "TV360 decrypted: ${decrypted.take(150)}...")
 
             val dataJson = org.json.JSONObject(decrypted)
+            val isDrm = dataJson.optInt("isDrm", 0)
             val linkPlay = dataJson.optString("urlStreaming", "")
                 .ifEmpty { dataJson.optString("url", "") }
                 .ifEmpty { dataJson.optString("linkPlay", "") }
                 .ifEmpty { dataJson.optString("link_play", "") }
+
+            // Phát hiện luồng DRM (CENC DASH qua Sigma Multi-DRM)
+            if (isDrm > 0 || linkPlay.contains(".mpd", ignoreCase = true)) {
+                val scheduleName = dataJson.optString("scheduleName", "").ifEmpty { "kênh $tv360Id" }
+                com.tvlaoto.util.AppLogger.w(
+                    "ChannelRepo",
+                    "TV360 kênh $tv360Id ($scheduleName) sử dụng mã hoá bản quyền DRM (isDrm=$isDrm, DASH CENC). " +
+                    "TV360 chỉ hỗ trợ giải mã trên app TV360 chính thức của Viettel (qua Sigma DRM)."
+                )
+                lastTv360ErrorCode = 403
+                lastTv360Error = "Kênh này được bảo vệ bởi bản quyền DRM (TV360 Sigma DRM).\n" +
+                    "Nội dung chỉ hỗ trợ xem trên app TV360 chính thức của Viettel.\n" +
+                    "Vui lòng chọn các kênh phim không mã hoá (Phim 4K, 360 K-Drama, Anime, VTVCab Cine...)"
+                return null
+            }
 
             if (linkPlay.isNotEmpty()) {
                 com.tvlaoto.util.AppLogger.i("ChannelRepo", "TV360 URL: ${linkPlay.take(80)}...")
@@ -862,6 +878,26 @@ class ChannelRepository(
                 if (url != null || lastTv360ErrorCode != 428) break
             }
         }
+        // Auto-fallback cho các kênh bị khoá bản quyền DRM (như 9903 Phim Âu Mỹ, 10012 Phim Kinh Điển)
+        // tự động chuyển tiếp sang kênh phim tương đương không mã hoá (176: VTVcab 10 On Cine HD, 181: VTVcab 4 On Movies)
+        if (url == null && lastTv360ErrorCode == 403) {
+            val fallbackChannelId = when (tv360Id) {
+                9903 -> 176  // VTVcab 10 - On Cine HD (Phim Âu Mỹ điện ảnh, không mã hoá, 1080p)
+                10012 -> 181 // VTVcab 4 - On Movies (Phim Hollywood kinh điển, không mã hoá, 1080p)
+                else -> null
+            }
+            if (fallbackChannelId != null) {
+                com.tvlaoto.util.AppLogger.i("ChannelRepo", "Kênh $tv360Id bị khoá DRM. Tự động chuyển tiếp sang kênh phim tương đương không DRM ($fallbackChannelId)...")
+                val fallbackUrl = doFetchTv360(fallbackChannelId, isMovie = false)
+                if (!fallbackUrl.isNullOrEmpty()) {
+                    lastTv360Error = null
+                    lastTv360ErrorCode = 200
+                    tv360UrlCache[tv360Id] = CachedStreamUrl(fallbackUrl, System.currentTimeMillis() + TV360_CACHE_TTL_MS)
+                    return@withContext fallbackUrl
+                }
+            }
+        }
+
         url
     }
 
@@ -870,7 +906,7 @@ class ChannelRepository(
      * Call once at app startup. Fetches sequentially to minimize device sessions.
      * After this, all movie channel switches use cached CDN URLs (no device limit).
      */
-    private val TV360_MOVIE_CHANNELS = listOf(9903, 10009, 10010, 10011, 10012, 10013, 10055)
+    private val TV360_MOVIE_CHANNELS = listOf(10055, 10009, 10010, 10011, 10013, 176, 181)
 
     suspend fun prefetchTv360MovieUrls() = withContext(Dispatchers.IO) {
         com.tvlaoto.util.AppLogger.i("ChannelRepo", "TV360 pre-fetching ${TV360_MOVIE_CHANNELS.size} movie channel URLs...")
@@ -883,7 +919,8 @@ class ChannelRepository(
                 continue
             }
             try {
-                val url = doFetchTv360(channelId, isMovie = true)
+                val isMovieChannel = channelId in setOf(10009, 10010, 10011, 10013, 10055)
+                val url = doFetchTv360(channelId, isMovie = isMovieChannel)
                 if (url != null) {
                     successCount++
                 } else if (lastTv360ErrorCode == 428) {

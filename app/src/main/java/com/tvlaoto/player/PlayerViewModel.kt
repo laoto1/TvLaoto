@@ -313,6 +313,12 @@ class PlayerViewModel(
         com.tvlaoto.util.AppLogger.d("Player", "isPlaying=$isPlaying")
     }
 
+    override fun onRenderedFirstFrame() {
+        super.onRenderedFirstFrame()
+        com.tvlaoto.util.AppLogger.i("Player", "First video frame rendered for ${_currentChannel.value?.name}")
+        _isBuffering.value = false
+    }
+
     override fun onPlayerError(error: PlaybackException) {
         com.tvlaoto.util.AppLogger.e("Player", "Player error: code=${error.errorCode} msg=${error.message}", error)
         val currentCh = _currentChannel.value
