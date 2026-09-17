@@ -1,5 +1,5 @@
 {
-  "timestamp": 1789675162,
+  "timestamp": 1789684393,
   "channels": {
     "vtv1": {
       "name": "VTV1 HD",
@@ -513,43 +513,43 @@
           "index": 56,
           "time": "03:30",
           "title": "Mặt trời lạnh - Tập 25",
-          "is_replayable": false,
-          "start_epoch": 1789677000,
-          "end_epoch": 1789679580,
+          "is_replayable": true,
+          "start_epoch": 1789677010,
+          "end_epoch": 1789679590,
           "catchup_url": null
         },
         {
           "index": 57,
-          "time": "04:15",
+          "time": "04:12",
           "title": "Mặt trời lạnh - Tập 26",
-          "is_replayable": false,
-          "start_epoch": 1789679700,
-          "end_epoch": 1789682160,
+          "is_replayable": true,
+          "start_epoch": 1789679573,
+          "end_epoch": 1789682033,
           "catchup_url": null
         },
         {
           "index": 58,
-          "time": "05:05",
+          "time": "05:04",
           "title": "S - Việt Nam: Huế - Hòa vào nhịp sống Đầm Chuồn",
-          "is_replayable": false,
-          "start_epoch": 1789682700,
-          "end_epoch": 1789683060,
+          "is_replayable": true,
+          "start_epoch": 1789682680,
+          "end_epoch": 1789683040,
           "catchup_url": null
         },
         {
           "index": 59,
-          "time": "05:10",
+          "time": "05:11",
           "title": "Cựu chiến binh Việt Nam: Mệnh lệnh từ trái tim",
-          "is_replayable": false,
-          "start_epoch": 1789683000,
-          "end_epoch": 1789683840,
+          "is_replayable": true,
+          "start_epoch": 1789683063,
+          "end_epoch": 1789683903,
           "catchup_url": null
         },
         {
           "index": 60,
           "time": "05:30",
           "title": "Chào buổi sáng",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1789684200,
           "end_epoch": 1789689600,
           "catchup_url": null
@@ -1003,54 +1003,54 @@
         },
         {
           "index": 49,
-          "time": "03:00",
+          "time": "02:56",
           "title": "S - Tech",
-          "is_replayable": false,
-          "start_epoch": 1789675200,
-          "end_epoch": 1789677000,
+          "is_replayable": true,
+          "start_epoch": 1789674994,
+          "end_epoch": 1789676794,
           "catchup_url": null
         },
         {
           "index": 50,
           "time": "03:30",
           "title": "Chuyện nhà thời nay: Đi tiếp và trao đi",
-          "is_replayable": false,
-          "start_epoch": 1789677000,
-          "end_epoch": 1789678560,
+          "is_replayable": true,
+          "start_epoch": 1789677018,
+          "end_epoch": 1789678578,
           "catchup_url": null
         },
         {
           "index": 51,
-          "time": "04:00",
+          "time": "03:59",
           "title": "Cuộc đời vẫn đẹp sao - Tập 7",
-          "is_replayable": false,
-          "start_epoch": 1789678800,
-          "end_epoch": 1789681560,
+          "is_replayable": true,
+          "start_epoch": 1789678789,
+          "end_epoch": 1789681549,
           "catchup_url": null
         },
         {
           "index": 52,
           "time": "04:45",
           "title": "Dám sống: Đi về phía mặt trời",
-          "is_replayable": false,
-          "start_epoch": 1789681500,
-          "end_epoch": 1789682220,
+          "is_replayable": true,
+          "start_epoch": 1789681516,
+          "end_epoch": 1789682236,
           "catchup_url": null
         },
         {
           "index": 53,
           "time": "05:00",
           "title": "Hiểu sâu - sống chất: Làm sao để sống chung với thiên tai?",
-          "is_replayable": false,
-          "start_epoch": 1789682400,
-          "end_epoch": 1789684080,
+          "is_replayable": true,
+          "start_epoch": 1789682424,
+          "end_epoch": 1789684104,
           "catchup_url": null
         },
         {
           "index": 54,
           "time": "05:30",
           "title": "Bạn của nhà nông",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1789684200,
           "end_epoch": 1789686900,
           "catchup_url": null
@@ -1517,11 +1517,20 @@
           "title": "Hiểu sâu - sống chất: Sử dụng pin lithium an toàn",
           "is_replayable": true,
           "start_epoch": 1789662846,
-          "end_epoch": 1789664638,
+          "end_epoch": 1789664400,
           "catchup_url": null
         },
         {
           "index": 49,
+          "time": "00:00",
+          "title": "Hiểu sâu - sống chất: Sử dụng pin lithium an toàn",
+          "is_replayable": true,
+          "start_epoch": 1789664400,
+          "end_epoch": 1789664580,
+          "catchup_url": null
+        },
+        {
+          "index": 50,
           "time": "00:03",
           "title": "Ấm áp và ngọt ngào - Tập 13",
           "is_replayable": true,
@@ -1530,7 +1539,7 @@
           "catchup_url": null
         },
         {
-          "index": 50,
+          "index": 51,
           "time": "01:03",
           "title": "Sao check: Diễn viên Huỳnh Anh",
           "is_replayable": true,
@@ -1539,7 +1548,7 @@
           "catchup_url": null
         },
         {
-          "index": 51,
+          "index": 52,
           "time": "01:31",
           "title": "Đường lên đỉnh Olympia",
           "is_replayable": true,
@@ -1548,7 +1557,7 @@
           "catchup_url": null
         },
         {
-          "index": 52,
+          "index": 53,
           "time": "02:20",
           "title": "Chuyện nhà thời nay: Một cách để gần nhau hơn",
           "is_replayable": true,
@@ -1557,7 +1566,7 @@
           "catchup_url": null
         },
         {
-          "index": 53,
+          "index": 54,
           "time": "02:52",
           "title": "Những chặng đường bụi bặm - Tập 21",
           "is_replayable": true,
@@ -1566,34 +1575,34 @@
           "catchup_url": null
         },
         {
-          "index": 54,
-          "time": "03:45",
-          "title": "Tầm ngắm tội phạm - Tập 28",
-          "is_replayable": false,
-          "start_epoch": 1789677900,
-          "end_epoch": 1789680900,
-          "catchup_url": null
-        },
-        {
           "index": 55,
-          "time": "04:35",
-          "title": "Bạn kể tôi nghe",
-          "is_replayable": false,
-          "start_epoch": 1789680900,
-          "end_epoch": 1789682400,
+          "time": "03:39",
+          "title": "Tầm ngắm tội phạm - Tập 28",
+          "is_replayable": true,
+          "start_epoch": 1789677595,
+          "end_epoch": 1789680595,
           "catchup_url": null
         },
         {
           "index": 56,
-          "time": "05:00",
-          "title": "Chuyện nơi thành phố nhỏ - Tập 10",
-          "is_replayable": false,
-          "start_epoch": 1789682400,
-          "end_epoch": 1789686000,
+          "time": "04:38",
+          "title": "Bạn kể tôi nghe",
+          "is_replayable": true,
+          "start_epoch": 1789681129,
+          "end_epoch": 1789682629,
           "catchup_url": null
         },
         {
           "index": 57,
+          "time": "05:04",
+          "title": "Chuyện nơi thành phố nhỏ - Tập 10",
+          "is_replayable": true,
+          "start_epoch": 1789682682,
+          "end_epoch": 1789686282,
+          "catchup_url": null
+        },
+        {
+          "index": 58,
           "time": "06:00",
           "title": "Hiểu sâu - sống chất: Vì sao voi nhà không sinh sản?",
           "is_replayable": false,
@@ -1602,7 +1611,7 @@
           "catchup_url": null
         },
         {
-          "index": 58,
+          "index": 59,
           "time": "06:30",
           "title": "Cà phê sáng",
           "is_replayable": false,
@@ -2158,65 +2167,65 @@
         },
         {
           "index": 60,
-          "time": "03:00",
+          "time": "03:09",
           "title": "Phóng sự: Chuyển trọng tâm từ số lượng sang chất lượng dòng vốn FDI",
           "is_replayable": true,
-          "start_epoch": 1789675200,
-          "end_epoch": 1789676100,
+          "start_epoch": 1789675788,
+          "end_epoch": 1789676688,
           "catchup_url": null
         },
         {
           "index": 61,
-          "time": "03:15",
+          "time": "03:25",
           "title": "Nhìn từ Hà Nội: Người Việt Nam ở nước ngoài: Chủ thể của sự kết nối và phát triển",
-          "is_replayable": false,
-          "start_epoch": 1789676100,
-          "end_epoch": 1789677900,
+          "is_replayable": true,
+          "start_epoch": 1789676706,
+          "end_epoch": 1789678506,
           "catchup_url": null
         },
         {
           "index": 62,
-          "time": "03:45",
+          "time": "03:49",
           "title": "Check in Việt Nam: Vị của biển",
-          "is_replayable": false,
-          "start_epoch": 1789677900,
-          "end_epoch": 1789678800,
+          "is_replayable": true,
+          "start_epoch": 1789678169,
+          "end_epoch": 1789679069,
           "catchup_url": null
         },
         {
           "index": 63,
-          "time": "04:00",
+          "time": "04:07",
           "title": "Giai điệu cuộc sống: Đường cày đảm đang",
-          "is_replayable": false,
-          "start_epoch": 1789678800,
-          "end_epoch": 1789679700,
+          "is_replayable": true,
+          "start_epoch": 1789679237,
+          "end_epoch": 1789680137,
           "catchup_url": null
         },
         {
           "index": 64,
-          "time": "04:15",
+          "time": "04:19",
           "title": "Phóng sự: Một nguời Mỹ nặng lòng với Việt Nam",
-          "is_replayable": false,
-          "start_epoch": 1789679700,
-          "end_epoch": 1789680600,
+          "is_replayable": true,
+          "start_epoch": 1789679943,
+          "end_epoch": 1789680843,
           "catchup_url": null
         },
         {
           "index": 65,
-          "time": "04:30",
+          "time": "04:33",
           "title": "Giai điệu kết nối: Giấc mơ của cha",
-          "is_replayable": false,
-          "start_epoch": 1789680600,
-          "end_epoch": 1789682400,
+          "is_replayable": true,
+          "start_epoch": 1789680806,
+          "end_epoch": 1789682606,
           "catchup_url": null
         },
         {
           "index": 66,
-          "time": "05:00",
+          "time": "05:02",
           "title": "Chúng ta của 8 năm sau - Tập 26",
-          "is_replayable": false,
-          "start_epoch": 1789682400,
-          "end_epoch": 1789685100,
+          "is_replayable": true,
+          "start_epoch": 1789682561,
+          "end_epoch": 1789685261,
           "catchup_url": null
         },
         {
@@ -2661,7 +2670,7 @@
           "index": 45,
           "time": "03:15",
           "title": "Chuyện làng chuyện bản: Điểm tựa nơi biên giới",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1789676100,
           "end_epoch": 1789677000,
           "catchup_url": null
@@ -2670,7 +2679,7 @@
           "index": 46,
           "time": "03:30",
           "title": "Ánh sáng tri thức: Nhà sáng chế của nông dân",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1789677000,
           "end_epoch": 1789677900,
           "catchup_url": null
@@ -2679,7 +2688,7 @@
           "index": 47,
           "time": "03:45",
           "title": "Hành trình mở lối: Phát huy giá trị nông nghiệp ở Tú Lệ",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1789677900,
           "end_epoch": 1789679700,
           "catchup_url": null
@@ -2688,7 +2697,7 @@
           "index": 48,
           "time": "04:15",
           "title": "Kẻ mai mối xứng tầm - Tập 14",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1789679700,
           "end_epoch": 1789682400,
           "catchup_url": null
@@ -2697,7 +2706,7 @@
           "index": 49,
           "time": "05:00",
           "title": "Chương trình tiếng Mường",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1789682400,
           "end_epoch": 1789684200,
           "catchup_url": null
@@ -2706,7 +2715,7 @@
           "index": 50,
           "time": "05:30",
           "title": "Chương trình tiếng Tày",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1789684200,
           "end_epoch": 1789686000,
           "catchup_url": null
@@ -3045,7 +3054,7 @@
           "index": 34,
           "time": "03:15",
           "title": "Sitcom: Má ơi tỉnh mộng - Tập 85",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1789676100,
           "end_epoch": 1789677000,
           "catchup_url": null
@@ -3054,7 +3063,7 @@
           "index": 35,
           "time": "03:30",
           "title": "Hiểu sâu, sống chất: Ghế an toàn trẻ em - Cần hay không?",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1789677000,
           "end_epoch": 1789678800,
           "catchup_url": null
@@ -3063,7 +3072,7 @@
           "index": 36,
           "time": "04:00",
           "title": "Lá chắn cuộc sống: Cảnh giác với biên lai và màn hình chuyển khoản giả",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1789678800,
           "end_epoch": 1789679700,
           "catchup_url": null
@@ -3072,7 +3081,7 @@
           "index": 37,
           "time": "04:15",
           "title": "Sắc màu các dân tộc: Ẩn sâu trong thung lũng",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1789679700,
           "end_epoch": 1789681500,
           "catchup_url": null
@@ -3081,7 +3090,7 @@
           "index": 38,
           "time": "04:45",
           "title": "Tiểu nữ hoa bất khí - Tập 43",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1789681500,
           "end_epoch": 1789684200,
           "catchup_url": null
@@ -3090,7 +3099,7 @@
           "index": 39,
           "time": "05:30",
           "title": "Chương trình tiếng Khmer",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1789684200,
           "end_epoch": 1789693200,
           "catchup_url": null
@@ -3537,7 +3546,7 @@
           "index": 48,
           "time": "03:15",
           "title": "Tiếng hát trong trái tim đồng bào: Lời Khắp đại ngàn",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1789676100,
           "end_epoch": 1789677900,
           "catchup_url": null
@@ -3546,7 +3555,7 @@
           "index": 49,
           "time": "03:45",
           "title": "Kiến tạo tương lai số: Hạ tầng số - Huyết mạch của nền kinh tế",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1789677900,
           "end_epoch": 1789678800,
           "catchup_url": null
@@ -3555,7 +3564,7 @@
           "index": 50,
           "time": "04:00",
           "title": "Lỡ hẹn với ngày xanh - Tập 44",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1789678800,
           "end_epoch": 1789680600,
           "catchup_url": null
@@ -3564,7 +3573,7 @@
           "index": 51,
           "time": "04:30",
           "title": "Vì cộng đồng: Người giữ hồn đất",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1789680600,
           "end_epoch": 1789681500,
           "catchup_url": null
@@ -3573,7 +3582,7 @@
           "index": 52,
           "time": "04:45",
           "title": "Môi trường và cuộc sống: Mô hình tuần hoàn tái chế giấy",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1789681500,
           "end_epoch": 1789682100,
           "catchup_url": null
@@ -3582,7 +3591,7 @@
           "index": 53,
           "time": "04:55",
           "title": "Hành trình đất Việt",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1789682100,
           "end_epoch": 1789682400,
           "catchup_url": null
@@ -3591,7 +3600,7 @@
           "index": 54,
           "time": "05:00",
           "title": "Chương trình tiếng M'Nông",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1789682400,
           "end_epoch": 1789684200,
           "catchup_url": null
@@ -3600,7 +3609,7 @@
           "index": 55,
           "time": "05:30",
           "title": "Chương trình tiếng Gié Triêng",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1789684200,
           "end_epoch": 1789686000,
           "catchup_url": null
@@ -3894,7 +3903,7 @@
           "index": 29,
           "time": "05:00",
           "title": "Sống lại trận đấu: FIFA World Cup 2026 BẢNG H: Tây Ban Nha - Ả Rập Xê Út",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1789682400,
           "end_epoch": 1789684200,
           "catchup_url": null
@@ -3903,7 +3912,7 @@
           "index": 30,
           "time": "05:30",
           "title": "Bật năng lượng",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1789684200,
           "end_epoch": 1789684800,
           "catchup_url": null
@@ -4725,7 +4734,7 @@
           "index": 49,
           "time": "03:25",
           "title": "Ẩm thực độc đáo: Bánh ướt, bún thịt nướng xứ Huế",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1789676700,
           "end_epoch": 1789676880,
           "catchup_url": null
@@ -4734,7 +4743,7 @@
           "index": 50,
           "time": "03:30",
           "title": "Sự sống diệu kỳ: Người đưa điệu hò lan tỏa",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1789677000,
           "end_epoch": 1789677780,
           "catchup_url": null
@@ -4743,7 +4752,7 @@
           "index": 51,
           "time": "03:45",
           "title": "Tiếng lòng - Tập 22",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1789677900,
           "end_epoch": 1789679700,
           "catchup_url": null
@@ -4752,7 +4761,7 @@
           "index": 52,
           "time": "04:15",
           "title": "Phim tài liệu: Những mạch sống của Thủ đô",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1789679700,
           "end_epoch": 1789681320,
           "catchup_url": null
@@ -4761,7 +4770,7 @@
           "index": 53,
           "time": "04:45",
           "title": "Kết nối VTV8",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1789681500,
           "end_epoch": 1789682400,
           "catchup_url": null
@@ -4770,7 +4779,7 @@
           "index": 54,
           "time": "05:00",
           "title": "Giao lưu - Tọa đàm: Giá mà biết trước - An toàn giao thông cho Học sinh sinh viên",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1789682400,
           "end_epoch": 1789683900,
           "catchup_url": null
@@ -4779,7 +4788,7 @@
           "index": 55,
           "time": "05:25",
           "title": "Muôn màu cuộc sống: Chuyện \"thổi luồng gió mới\" vào lòng đất ngũ bách niên",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1789683900,
           "end_epoch": 1789684080,
           "catchup_url": null
@@ -4788,7 +4797,7 @@
           "index": 56,
           "time": "05:30",
           "title": "Giải mã cuộc sống: Huyền thoại xe đạp Peugeot",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1789684200,
           "end_epoch": 1789685040,
           "catchup_url": null
@@ -5352,7 +5361,7 @@
           "index": 56,
           "time": "03:45",
           "title": "Bước chân khám phá",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1789677900,
           "end_epoch": 1789678800,
           "catchup_url": null
@@ -5361,7 +5370,7 @@
           "index": 57,
           "time": "04:00",
           "title": "Làng cười, cười cả làng",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1789678800,
           "end_epoch": 1789679700,
           "catchup_url": null
@@ -5370,7 +5379,7 @@
           "index": 58,
           "time": "04:15",
           "title": "Kỷ niệm thanh xuân",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1789679700,
           "end_epoch": 1789680900,
           "catchup_url": null
@@ -5379,7 +5388,7 @@
           "index": 59,
           "time": "04:35",
           "title": "Chị em gỡ rối",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1789680900,
           "end_epoch": 1789682400,
           "catchup_url": null
@@ -5388,7 +5397,7 @@
           "index": 60,
           "time": "05:00",
           "title": "Người thừa kế không danh phận - Tập 24",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1789682400,
           "end_epoch": 1789683900,
           "catchup_url": null
@@ -5397,7 +5406,7 @@
           "index": 61,
           "time": "05:25",
           "title": "Tám công sở: Trạm cứu hộ tình yêu - Tập 65",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1789683900,
           "end_epoch": 1789684500,
           "catchup_url": null
@@ -5406,7 +5415,7 @@
           "index": 62,
           "time": "05:35",
           "title": "Chuyện phố phường",
-          "is_replayable": false,
+          "is_replayable": true,
           "start_epoch": 1789684500,
           "end_epoch": 1789684800,
           "catchup_url": null
