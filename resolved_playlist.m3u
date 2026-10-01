@@ -1,37 +1,37 @@
 #EXTM3U
-# Generated at: 1790866323
+# Generated at: 1790884570
 # Resolved: 11 channels
 # Errors: thvl1, thvl2, thvl3, thvl4, thvl5
 
-#EXTINF:-1 tvg-logo="https://i.ibb.co/9m1QkntG/nh.png" group-title="Tin Tức" resolved-at="1790866323",VTV1 HD
-https://vtvgoliveapp2-aws-qt.vtvdigital.vn/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3OTA4ODc5MjcsImlhdCI6MTc5MDg2NjMyNywic3ViIjoiYW5vbnltb3VzIn0.G0pGGeQx_Jj81G44r-DUsw6ADNRfUZpAyTzqQZiVjWI/aws/vtv1_free/playlist.m3u8
+#EXTINF:-1 tvg-logo="https://i.ibb.co/9m1QkntG/nh.png" group-title="Tin Tức" resolved-at="1790884570",VTV1 HD
+https://vtvgoliveapp2-aws-qt.vtvdigital.vn/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3OTA5MDYxNzQsImlhdCI6MTc5MDg4NDU3NCwic3ViIjoiYW5vbnltb3VzIn0.6WDf34bagxX4AxF5ZZELpf9kmaMKl_WVJ8_iw6qEh28/aws/vtv1_free/playlist.m3u8
 
-#EXTINF:-1 tvg-logo="https://i.ibb.co/nqmy1jqc/nh.png" group-title="Tin Tức" resolved-at="1790866323",VTV2 HD
-https://vtv-live-push-token.akamaized.net/hls/live/2029308/vtv2/playlist.m3u8?hdnts=exp=1790880732~acl=/hls/live/2029308/vtv2/*~hmac=ca6b38ec73d3851de61f0586ead5a9a38413a39ac4e43094553524dab6790447
+#EXTINF:-1 tvg-logo="https://i.ibb.co/nqmy1jqc/nh.png" group-title="Tin Tức" resolved-at="1790884570",VTV2 HD
+https://vtv-live-push-token.akamaized.net/hls/live/2029308/vtv2/playlist.m3u8?hdnts=exp=1790898978~acl=/hls/live/2029308/vtv2/*~hmac=c7afda1ef90be7605386384ae5248e8801adc9cf0ad216fb5017edcf30e49a30
 
-#EXTINF:-1 tvg-logo="https://i.ibb.co/9H0dCdSG/nh.png" group-title="Tin Tức" resolved-at="1790866323",VTV3 HD
-https://vtv-live-push-token.akamaized.net/hls/live/2029309/vtv3/playlist.m3u8?hdnts=exp=1790880736~acl=/hls/live/2029309/vtv3/*~hmac=2f1b15424ce6d3c3e0af78e5632d0d8b28ee613f3fee08fc4cf606f482d71d93
+#EXTINF:-1 tvg-logo="https://i.ibb.co/9H0dCdSG/nh.png" group-title="Tin Tức" resolved-at="1790884570",VTV3 HD
+https://vtv-live-push-token.akamaized.net/hls/live/2029309/vtv3/playlist.m3u8?hdnts=exp=1790898982~acl=/hls/live/2029309/vtv3/*~hmac=ef10df0f7308a20bca9560549db93ffa80a8d9f103e20985b7beea22d0cbca49
 
-#EXTINF:-1 tvg-logo="https://i.ibb.co/SDQyKqSG/nh.png" group-title="Tin Tức" resolved-at="1790866323",VTV4 HD
-https://vtv-live-push-token.akamaized.net/hls/live/2029310/vtv4/playlist.m3u8?hdnts=exp=1790880740~acl=/hls/live/2029310/vtv4/*~hmac=0e58283215e20604a0bbbf3b72c7c6fc73e0b742d977c8b235d0115610fe150f
+#EXTINF:-1 tvg-logo="https://i.ibb.co/SDQyKqSG/nh.png" group-title="Tin Tức" resolved-at="1790884570",VTV4 HD
+https://vtv-live-push-token.akamaized.net/hls/live/2029310/vtv4/playlist.m3u8?hdnts=exp=1790898987~acl=/hls/live/2029310/vtv4/*~hmac=7970839066e9a6337c2fb2d6158375d61e143a4cc5d9e6cfda2beddf4932252d
 
-#EXTINF:-1 tvg-logo="https://i.ibb.co/KxN0YnR4/nh.png" group-title="Tin Tức" resolved-at="1790866323",VTV5 HD
-https://vtv-live-push-token.akamaized.net/hls/live/2029311/vtv5/playlist.m3u8?hdnts=exp=1790880745~acl=/hls/live/2029311/vtv5/*~hmac=111b19e2bdfd9791e64f93b1e4176e2765330fb5571e61fde9a7d334a977fd4c
+#EXTINF:-1 tvg-logo="https://i.ibb.co/KxN0YnR4/nh.png" group-title="Tin Tức" resolved-at="1790884570",VTV5 HD
+https://vtv-live-push-token.akamaized.net/hls/live/2029311/vtv5/playlist.m3u8?hdnts=exp=1790898992~acl=/hls/live/2029311/vtv5/*~hmac=83bb477e5c4df136ed0ce6448b032c252c99e0449dd0a2b57deaa516418ad394
 
-#EXTINF:-1 tvg-logo="https://i.ibb.co/PZN1Pvjs/nh.png" group-title="Tin Tức" resolved-at="1790866323",VTV5 HD Tây Nam Bộ
-https://vtv-live-push-token.akamaized.net/hls/live/2029313/vtv5tnb/playlist.m3u8?hdnts=exp=1790880749~acl=/hls/live/2029313/vtv5tnb/*~hmac=a015afe5f221126a803bbe322cd8b1a406b1e79e58098e2a13a9491fe32804a1
+#EXTINF:-1 tvg-logo="https://i.ibb.co/PZN1Pvjs/nh.png" group-title="Tin Tức" resolved-at="1790884570",VTV5 HD Tây Nam Bộ
+https://vtv-live-push-token.akamaized.net/hls/live/2029313/vtv5tnb/playlist.m3u8?hdnts=exp=1790898997~acl=/hls/live/2029313/vtv5tnb/*~hmac=5d85802d58cc432173cbd7f43180e18ddeee07a23f70a716aa7ab80caf49cf25
 
-#EXTINF:-1 tvg-logo="https://i.ibb.co/hJWB3n80/nh.png" group-title="Tin Tức" resolved-at="1790866323",VTV5 HD Tây Nguyên
-https://vtv-live-push-token.akamaized.net/hls/live/2029312/vtv5tn/playlist.m3u8?hdnts=exp=1790880753~acl=/hls/live/2029312/vtv5tn/*~hmac=de633a68ae42b49490047b9b6b2a9153b292bae8c37023f4cba2260a0d03c18a
+#EXTINF:-1 tvg-logo="https://i.ibb.co/hJWB3n80/nh.png" group-title="Tin Tức" resolved-at="1790884570",VTV5 HD Tây Nguyên
+https://vtv-live-push-token.akamaized.net/hls/live/2029312/vtv5tn/playlist.m3u8?hdnts=exp=1790899002~acl=/hls/live/2029312/vtv5tn/*~hmac=5d467bb2281c17711613fe3f479fd1c5d0da23246c6482be168fadead4fa8f05
 
-#EXTINF:-1 tvg-logo="https://i.ibb.co/kgmZ7KLD/nh.png" group-title="Tin Tức" resolved-at="1790866323",VTV6 HD
-https://vtv-live-push-token.akamaized.net/hls/live/2125536/vtv6tt/playlist.m3u8?hdnts=exp=1790880758~acl=/hls/live/2125536/vtv6tt/*~hmac=8184fc2681f364d2df79e0b5e10b709f44d7c07d69545a2b4b7787897f281b10
+#EXTINF:-1 tvg-logo="https://i.ibb.co/kgmZ7KLD/nh.png" group-title="Tin Tức" resolved-at="1790884570",VTV6 HD
+https://vtv-live-push-token.akamaized.net/hls/live/2125536/vtv6tt/playlist.m3u8?hdnts=exp=1790899006~acl=/hls/live/2125536/vtv6tt/*~hmac=3262a50373828856386ab81344355ac5b88f842bd9de81922703e80ef7a6714b
 
-#EXTINF:-1 tvg-logo="https://i.ibb.co/DPnZCt3Y/nh.png" group-title="Tin Tức" resolved-at="1790866323",VTV7 HD
-https://vtv-live-push-token.akamaized.net/hls/live/2029315/vtv7/playlist.m3u8?hdnts=exp=1790880763~acl=/hls/live/2029315/vtv7/*~hmac=01da43ba9b3a7a3736fb3fb76a3bac2abf7fa88392437b1ce025fe4980efb336
+#EXTINF:-1 tvg-logo="https://i.ibb.co/DPnZCt3Y/nh.png" group-title="Tin Tức" resolved-at="1790884570",VTV7 HD
+https://vtv-live-push-token.akamaized.net/hls/live/2029315/vtv7/playlist.m3u8?hdnts=exp=1790899011~acl=/hls/live/2029315/vtv7/*~hmac=0a943e346e75ff36197a2f9ccc9f62465e6a1975c1a3dacbd0d5a1894b652883
 
-#EXTINF:-1 tvg-logo="https://i.ibb.co/Qjz1BTBk/nh.png" group-title="Tin Tức" resolved-at="1790866323",VTV8 HD
-https://vtv-live-push-token.akamaized.net/hls/live/2029316/vtv8/playlist.m3u8?hdnts=exp=1790880767~acl=/hls/live/2029316/vtv8/*~hmac=910bafd6f735a3948432ebd49d32edaad5f705d34bf069fdf6f3759bab0f388b
+#EXTINF:-1 tvg-logo="https://i.ibb.co/Qjz1BTBk/nh.png" group-title="Tin Tức" resolved-at="1790884570",VTV8 HD
+https://vtv-live-push-token.akamaized.net/hls/live/2029316/vtv8/playlist.m3u8?hdnts=exp=1790899015~acl=/hls/live/2029316/vtv8/*~hmac=4d8238a10313cfaaefe985c1f6e3afd84cabd454942f46f2be0de27342eed572
 
-#EXTINF:-1 tvg-logo="https://i.ibb.co/PvtLWtm7/nh.png" group-title="Tin Tức" resolved-at="1790866323",VTV9 HD
-https://vtv-live-push-token.akamaized.net/hls/live/2029317/vtv9/playlist.m3u8?hdnts=exp=1790880771~acl=/hls/live/2029317/vtv9/*~hmac=9ea59c92bf04b95071fc2d16d391252b766f5548a0e09f5343842c84a05b0b7f
+#EXTINF:-1 tvg-logo="https://i.ibb.co/PvtLWtm7/nh.png" group-title="Tin Tức" resolved-at="1790884570",VTV9 HD
+https://vtv-live-push-token.akamaized.net/hls/live/2029317/vtv9/playlist.m3u8?hdnts=exp=1790899020~acl=/hls/live/2029317/vtv9/*~hmac=3c02ad356a1dd6b7bb60ae3510910a70f729ea86392f5b477dc32d4f0a4ac13e
