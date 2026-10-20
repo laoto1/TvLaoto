@@ -1,37 +1,37 @@
 #EXTM3U
-# Generated at: 1792459284
+# Generated at: 1792476571
 # Resolved: 11 channels
 # Errors: thvl1, thvl2, thvl3, thvl4, thvl5
 
-#EXTINF:-1 tvg-logo="https://i.ibb.co/9m1QkntG/nh.png" group-title="Tin Tức" resolved-at="1792459284",VTV1 HD
+#EXTINF:-1 tvg-logo="https://i.ibb.co/9m1QkntG/nh.png" group-title="Tin Tức" resolved-at="1792476571",VTV1 HD
 https://live-vtv-qt-aws.vtvdigital.vn/0C0B2rXUn9XwdvdRStDLwQ/1792519200/aws/vtv1_free/playlist.m3u8
 
-#EXTINF:-1 tvg-logo="https://i.ibb.co/nqmy1jqc/nh.png" group-title="Tin Tức" resolved-at="1792459284",VTV2 HD
-https://vtv-live-push-token.akamaized.net/hls/live/2029308/vtv2/playlist.m3u8?hdnts=exp=1792473692~acl=/hls/live/2029308/vtv2/*~hmac=89cb3fe8c5582762c06e6ed2bdc46a4ae23c2d689e7dcc77648a0d935842cd28
+#EXTINF:-1 tvg-logo="https://i.ibb.co/nqmy1jqc/nh.png" group-title="Tin Tức" resolved-at="1792476571",VTV2 HD
+https://vtv-live-push-token.akamaized.net/hls/live/2029308/vtv2/playlist.m3u8?hdnts=exp=1792490979~acl=/hls/live/2029308/vtv2/*~hmac=271237fe20e284ae3d9c78199499d5f32f622d29b5b027c6252da6fc1eb55aa2
 
-#EXTINF:-1 tvg-logo="https://i.ibb.co/9H0dCdSG/nh.png" group-title="Tin Tức" resolved-at="1792459284",VTV3 HD
+#EXTINF:-1 tvg-logo="https://i.ibb.co/9H0dCdSG/nh.png" group-title="Tin Tức" resolved-at="1792476571",VTV3 HD
 https://live-vtv-qt-aws.vtvdigital.vn/zniIKElYoWCwictqlRCLvA/1792519200/aws/vtv3_free/playlist.m3u8
 
-#EXTINF:-1 tvg-logo="https://i.ibb.co/SDQyKqSG/nh.png" group-title="Tin Tức" resolved-at="1792459284",VTV4 HD
+#EXTINF:-1 tvg-logo="https://i.ibb.co/SDQyKqSG/nh.png" group-title="Tin Tức" resolved-at="1792476571",VTV4 HD
 https://live-vtv-qt-aws.vtvdigital.vn/vwRC1bjfhRVO4hqKquJfvw/1792519200/aws/vtv4_free/playlist.m3u8
 
-#EXTINF:-1 tvg-logo="https://i.ibb.co/KxN0YnR4/nh.png" group-title="Tin Tức" resolved-at="1792459284",VTV5 HD
-https://vtv-live-push-token.akamaized.net/hls/live/2029311/vtv5/playlist.m3u8?hdnts=exp=1792473706~acl=/hls/live/2029311/vtv5/*~hmac=34a07f84d39d68575ae0c5f9f4cd605821293d11f27a19c210de481f9199cfa1
+#EXTINF:-1 tvg-logo="https://i.ibb.co/KxN0YnR4/nh.png" group-title="Tin Tức" resolved-at="1792476571",VTV5 HD
+https://vtv-live-push-token.akamaized.net/hls/live/2029311/vtv5/playlist.m3u8?hdnts=exp=1792490993~acl=/hls/live/2029311/vtv5/*~hmac=392cd3a9d049a73adaa6111aeddfd74988e0645b81eaa5df23b5615ea9453177
 
-#EXTINF:-1 tvg-logo="https://i.ibb.co/PZN1Pvjs/nh.png" group-title="Tin Tức" resolved-at="1792459284",VTV5 HD Tây Nam Bộ
-https://vtv-live-push-token.akamaized.net/hls/live/2029313/vtv5tnb/playlist.m3u8?hdnts=exp=1792473711~acl=/hls/live/2029313/vtv5tnb/*~hmac=0c61f68cbdca7f52fb8e67af3c41316155a6e240d76442bc2341d71f714db112
+#EXTINF:-1 tvg-logo="https://i.ibb.co/PZN1Pvjs/nh.png" group-title="Tin Tức" resolved-at="1792476571",VTV5 HD Tây Nam Bộ
+https://vtv-live-push-token.akamaized.net/hls/live/2029313/vtv5tnb/playlist.m3u8?hdnts=exp=1792490998~acl=/hls/live/2029313/vtv5tnb/*~hmac=000f3f879590442ba6f24abfba8ed3bbaa7e4fdddb16a440f476f1ffdffd0f7a
 
-#EXTINF:-1 tvg-logo="https://i.ibb.co/hJWB3n80/nh.png" group-title="Tin Tức" resolved-at="1792459284",VTV5 HD Tây Nguyên
-https://vtv-live-push-token.akamaized.net/hls/live/2029312/vtv5tn/playlist.m3u8?hdnts=exp=1792473714~acl=/hls/live/2029312/vtv5tn/*~hmac=714447e54b21e33bd54c78abe1dfd2571032fa386688c9a5ab5582f95b80f14c
+#EXTINF:-1 tvg-logo="https://i.ibb.co/hJWB3n80/nh.png" group-title="Tin Tức" resolved-at="1792476571",VTV5 HD Tây Nguyên
+https://vtv-live-push-token.akamaized.net/hls/live/2029312/vtv5tn/playlist.m3u8?hdnts=exp=1792491002~acl=/hls/live/2029312/vtv5tn/*~hmac=fc0413f7ab99d2fb6512ecb320f2fc72d2cfc050acfab83047dc8e5b16c89947
 
-#EXTINF:-1 tvg-logo="https://i.ibb.co/kgmZ7KLD/nh.png" group-title="Tin Tức" resolved-at="1792459284",VTV6 HD
-https://vtv-live-push-token.akamaized.net/hls/live/2125536/vtv6tt/playlist.m3u8?hdnts=exp=1792473719~acl=/hls/live/2125536/vtv6tt/*~hmac=bb7afec29acbbb844b3df3e925e421043db9d1f9dd78d6a83404c8bc3b97077d
+#EXTINF:-1 tvg-logo="https://i.ibb.co/kgmZ7KLD/nh.png" group-title="Tin Tức" resolved-at="1792476571",VTV6 HD
+https://vtv-live-push-token.akamaized.net/hls/live/2125536/vtv6tt/playlist.m3u8?hdnts=exp=1792491006~acl=/hls/live/2125536/vtv6tt/*~hmac=b465c2ff299af2fcadb3f479ab3baaae23c4b917facfabeaf2faf352883f286f
 
-#EXTINF:-1 tvg-logo="https://i.ibb.co/DPnZCt3Y/nh.png" group-title="Tin Tức" resolved-at="1792459284",VTV7 HD
-https://vtv-live-push-token.akamaized.net/hls/live/2029315/vtv7/playlist.m3u8?hdnts=exp=1792473723~acl=/hls/live/2029315/vtv7/*~hmac=834636e87ea5860854086db8347ba75529cf654b0452a9830b54db786f615e65
+#EXTINF:-1 tvg-logo="https://i.ibb.co/DPnZCt3Y/nh.png" group-title="Tin Tức" resolved-at="1792476571",VTV7 HD
+https://vtv-live-push-token.akamaized.net/hls/live/2029315/vtv7/playlist.m3u8?hdnts=exp=1792491011~acl=/hls/live/2029315/vtv7/*~hmac=85848c8a39735ef33ccfa667a82b22290f88e337951f44427b8a80b51fa24cd7
 
-#EXTINF:-1 tvg-logo="https://i.ibb.co/Qjz1BTBk/nh.png" group-title="Tin Tức" resolved-at="1792459284",VTV8 HD
-https://vtv-live-push-token.akamaized.net/hls/live/2029316/vtv8/playlist.m3u8?hdnts=exp=1792473728~acl=/hls/live/2029316/vtv8/*~hmac=3f059b040043412cc6a4f76e15593e5a7de39d6eb664c7035d14b95f38b9f43a
+#EXTINF:-1 tvg-logo="https://i.ibb.co/Qjz1BTBk/nh.png" group-title="Tin Tức" resolved-at="1792476571",VTV8 HD
+https://vtv-live-push-token.akamaized.net/hls/live/2029316/vtv8/playlist.m3u8?hdnts=exp=1792491016~acl=/hls/live/2029316/vtv8/*~hmac=7642d9e0f7b47d12b433f8502ff87ea4fd6b38b23662618ae7c816f6df0ee99d
 
-#EXTINF:-1 tvg-logo="https://i.ibb.co/PvtLWtm7/nh.png" group-title="Tin Tức" resolved-at="1792459284",VTV9 HD
-https://vtv-live-push-token.akamaized.net/hls/live/2029317/vtv9/playlist.m3u8?hdnts=exp=1792473732~acl=/hls/live/2029317/vtv9/*~hmac=54eeb2ad8a92da30394f4eb89e41472db0e456724f60353fd59ca9e1d41b2e91
+#EXTINF:-1 tvg-logo="https://i.ibb.co/PvtLWtm7/nh.png" group-title="Tin Tức" resolved-at="1792476571",VTV9 HD
+https://vtv-live-push-token.akamaized.net/hls/live/2029317/vtv9/playlist.m3u8?hdnts=exp=1792491021~acl=/hls/live/2029317/vtv9/*~hmac=4d18a58ca8eebac4263ed4d3bb16280a5c948cd6e2594c89f798f635ade31d1b
